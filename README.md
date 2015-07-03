@@ -67,7 +67,7 @@ Once the git repository has been cloned you need to import the Gradle projects s
 
 First make sure that you have the Gradle IDE tools installed into Eclipse (help > Eclipse Marketplace > search for gradle) then follow the steps below:
 
-1. In the Git Repository view, expand the websocket repo to see the "Working Directory" folder
+1. In the Git Repository view, expand the 12factorapp repo to see the "Working Directory" folder
 2.  Right-click on this folder, and select *Copy path to Clipboard*
 3.  Select menu *File -> Import -> Gradle -> Gradle Project*
 4.  In the Root folder textbox, Paste in the repository directory.
@@ -97,7 +97,7 @@ Before creating a server you need a runtime environment for your server to be ba
     2. Select the `12-factor-wlpcfg` project
     3. Select *Finish*, *OK*, *Finish*
 4. Right-click on the `12-factor-wlpcfg` user directory listed under the target Runtime Environment in the Runtime Explorer view., and select *New Server*.
-5. The resulting dialog should be pre-populated with the websocketSample Liberty profile server.
+5. The resulting dialog should be pre-populated with the 12FactorAppServer Liberty profile server.
 6. Click *Finish*
 
 ###### Note
