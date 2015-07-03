@@ -6,4 +6,6 @@
 /servers/*/apps
 /servers/*/logs
 /servers/*/workarea
+
 /bin
+/servers/.classCache
