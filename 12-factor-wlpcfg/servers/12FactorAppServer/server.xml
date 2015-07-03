@@ -1,0 +1,14 @@
+<server description="Server for 12-factor app sample." >
+
+	<featureManager>
+		<feature>servlet-3.1</feature>
+		<feature>jaxrs-2.0</feature>
+	</featureManager>
+	
+	<httpEndpoint httpPort="9082" httpsPort="9445" id="defaultHttpEndpoint"/>
+
+    <applicationMonitor updateTrigger="mbean"/>
+
+    <webApplication id="12-factor-application" location="12-factor-application.war" name="12-factor-application"/>
+
+</server>
