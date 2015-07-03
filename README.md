@@ -7,7 +7,20 @@ This will be a sample for creating a twelve-factor app using WAS Liberty. A twel
 This sample can be built using [Gradle](http://gradle.org/).
 
 ```bash
-$ build build publishToMavenLocal
+$ gradle build publishToMavenLocal
+```
+
+The build.gradle files are configured such that, in addition to publishing the war to the local maven repository, the built war file is copied into the apps directory of the server configuration located in the 12-factor-wlpcfg directory:
+
+```text
+12-factor-wlpcfg
+ +- servers
+ 	 +- 12FactorAppServer					<-- specific server configuration
+ 	 	+- server.xml						<-- server configuration
+ 	 	+- apps								<-- directory for applications
+ 	 		+- 12-factor-application.war	<-- sample application
+ 	 	+- logs								<-- created by running the server locally
+ 	 	+- workarea							<-- created by running the server locally
 ```
 
 ## Notice
