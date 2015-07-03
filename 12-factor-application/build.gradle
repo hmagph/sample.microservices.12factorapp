@@ -1,7 +1,15 @@
 apply plugin: 'war'
 apply plugin: 'eclipse-wtp'
+apply plugin: 'maven-plugin'
 
-// Set the Eclipse facets to use 3.1 of the Dynamic Web Module (there doesn't appear to be a specific web socket facet)
+//Dependencies
+repositories { mavenCentral(); }
+
+dependencies {
+	compile group:'javax.servlet', name:'javax.servlet-api', version:'3.1.0'
+}
+
+// Set the Eclipse facets to use 3.0 of the Dynamic Web Module
 eclipse {
     wtp {
         facet {
@@ -9,4 +17,23 @@ eclipse {
             facet name: 'jst.web', version: '3.0'
         }
     }
+}
+
+// Copy WAR into build directory
+task publishWar(dependsOn: 'jar', type: Copy) {
+	from(war)
+	into('build/lib/apps')
+	
+assemble.dependsOn('publishWar')
+
+publishing {
+	publications {
+		mavenWar(MavenPublications) {
+			version '1.0-SNAPSHOT'
+			groupId 'net.wasdev.wlp.sample'
+			artifactId 'microservices-12factor'
+			
+			from components.web
+		}
+	}
 }
