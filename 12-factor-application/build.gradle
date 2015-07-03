@@ -1,6 +1,6 @@
 apply plugin: 'war'
 apply plugin: 'eclipse-wtp'
-apply plugin: 'maven-plugin'
+apply plugin: 'maven-publish'
 
 //Dependencies
 repositories { mavenCentral(); }
@@ -19,16 +19,17 @@ eclipse {
     }
 }
 
-// Copy WAR into build directory
+// Copy WAR into build directory, from here it will need to be copied to a liberty server to run
 task publishWar(dependsOn: 'jar', type: Copy) {
 	from(war)
 	into('build/lib/apps')
-	
+}
+
 assemble.dependsOn('publishWar')
 
 publishing {
 	publications {
-		mavenWar(MavenPublications) {
+		mavenWar(MavenPublication) {
 			version '1.0-SNAPSHOT'
 			groupId 'net.wasdev.wlp.sample'
 			artifactId 'microservices-12factor'
