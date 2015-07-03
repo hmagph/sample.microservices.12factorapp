@@ -3,3 +3,7 @@
 /.settings
 /.gradle
 /.project
+/servers/*/apps
+/servers/*/logs
+/servers/*/workarea
+/bin
