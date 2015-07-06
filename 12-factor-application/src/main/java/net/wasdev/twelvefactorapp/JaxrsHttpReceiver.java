@@ -17,22 +17,30 @@ public class JaxrsHttpReceiver {
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getResponse() {
-		String response = "Hello this is a response ";
-		String dbFiles = getDatabaseFiles();
-		return Response.ok(response + dbFiles).build();
+		String dbFiles = getDatabaseFiles("/_all_dbs");
+		String items = getDatabaseFiles("/items/_all_docs");
+		return Response.ok("All databases: " + dbFiles + "Items database: " + items).build();
 	}
 	
-	public String getDatabaseFiles() {
+	public String getDatabaseFiles(String extension) {
+		// Has been configured to match the cloudant database that we own in bluemix.
+		String username = System.getenv("dbUsername");
+		String password = System.getenv("dbPassword");
+		String url = System.getenv("dbUrl");
+		String fullUrl = url + extension;
+		
+		String usernameAndPassword = username + ":" + password;
+				
+		String authorizationHeaderName = "Authorization";
+		String authorizationHeaderValue = "Basic " + javax.xml.bind.DatatypeConverter.printBase64Binary(usernameAndPassword.getBytes());
+		
 		Client client = ClientBuilder.newClient();
-		String dbUrl = System.getenv("dbUrl");
-		String url = dbUrl;
-		WebTarget target = client.target(url);
-		Invocation.Builder invoBuild  = target.request(MediaType.APPLICATION_JSON);
+		WebTarget target = client.target(fullUrl);
+		Invocation.Builder invoBuild  = target.request(MediaType.APPLICATION_JSON).header(authorizationHeaderName, authorizationHeaderValue);
 		Response httpResponse = invoBuild.get();
 		String contents = httpResponse.readEntity(String.class);
 		httpResponse.close();
-		return contents + " url was " + url;
+		return contents;
 		
 	}
-
 }
