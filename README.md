@@ -108,7 +108,7 @@ If the '12-factor-wlpcfg' project does not appear in the dialog to add a project
 This sample connects to a Cloudant database that will be hosted on Bluemix. You sign up for a free 30-day trial of [Bluemix](www.bluemix.net).
 Once you are logged into Bluemix go to your dashboard to create a cloudant service:
 
-1. Select *USE SERVICES OR APIS"
+1. Select *USE SERVICES OR APIS*
 2. Navigate to the Data Management section and select the *Cloudant NoSQL DB* service
 3. Give the service a name, leave the App section as 'Leave unbound' and the plan as 'shared' then click *CREATE*
 
@@ -123,6 +123,7 @@ Now that we have a service we need to find out the service credentials so that w
 7. Select the arrow next to *Show Credentials* on your service, these are the credentials you will need for your system environment variables
 
 Once you have created your service and found out the credentials you need to create system environment variables as follows:
+
 1. Save the "username" as "dbUsername"
 2. "password" as "dbPassword
 3. "url" as "dbUrl"
@@ -139,8 +140,8 @@ You're now ready to run your application.
 1.  Select the `12-factor-application` project
 2.  Right-click -> *Run As... -> Run On Server*
 3.  Select the "WebShere Application Server under localhost" folder, and select *Finish*
-4a. Confirm web browser opens on "http://localhost:9082/12-factor-application/rest" and displays a list of all the databases and the content of the "items" database.
-4b. Alternatively open a browser on "http://localhost:9082/12-factor-application/Test" to see a 'hello world' message from the servlet
+4. Confirm web browser opens on "http://localhost:9082/12-factor-application/rest" and displays a list of all the databases and the content of the "items" database.
+5. Alternatively open a browser on "http://localhost:9082/12-factor-application/Test" to see a 'hello world' message from the servlet
 
 ## Notice
 
