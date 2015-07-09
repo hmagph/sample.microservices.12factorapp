@@ -152,7 +152,17 @@ The application can also be deployed onto Bluemix to run:
 2. Run the application on the Bluemix server by right clicking on the `12-factor-application` project and selecting *Run as... -> Run on server* and selecting the new Bluemix server
 3. Once the app has started on Bluemix go to the dashboard and open the application
 4. Click *BIND A SERVICE OR API* and select your Cloudant service that you created earlier
-5. You are finished, to access the app you need to find the route that is displayed at the top of the *Overview* tab in Bluemix then visit <route>/rest/ to display the database information
+5. You are finished, to access the app you need to find the route that is displayed at the top of the *Overview* tab in Bluemix then visit `<route>/rest/` to display the database information
+
+###### Deploying through the command line
+
+To deploy from the command line you need to push the war that has been copied into the '12-factor-wlpcfg' project to Bluemix:
+
+```bash
+$ cf push <myappname> -p <path to war>
+```
+
+then following steps 3-5 under Deploying to Eclipse.
 
 ## Notice
 
