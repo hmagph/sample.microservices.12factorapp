@@ -89,7 +89,7 @@ Before creating a server you need a runtime environment for your server to be ba
     * select *Install from an archive or a repository* to download a new Liberty archive.
 5. Follow the prompts (and possibly choose additional features to install) until you *Finish* creating the Runtime Environment
 
-##### Add the User directory from Gradle project, and create a server
+#### Add the User directory from Gradle project, and create a server
 1. Right-click on the Runtime Environment created above in the 'Runtime Explorer' view, and select *Edit*
 2. Click the `Advanced Options...` link
 3. If the `12-factor-wlpcfg` directory is not listed as a User Directory, we need to add it:
@@ -103,14 +103,73 @@ Before creating a server you need a runtime environment for your server to be ba
 ###### Note
 If the '12-factor-wlpcfg' project does not appear in the dialog to add a project to the User Directory make sure there is a 'shared' folder in the 12-factor-wlpcfg project with an empty .gitkeep file inside it.
 
+#### Creating a Cloudant database on Bluemix
+
+This sample connects to a Cloudant database that will be hosted on Bluemix. You sign up for a free 30-day trial of [Bluemix](www.bluemix.net).
+Once you are logged into Bluemix go to your dashboard to create a cloudant service:
+
+1. Select *USE SERVICES OR APIS*
+2. Navigate to the Data Management section and select the *Cloudant NoSQL DB* service
+3. Give the service a name, leave the App section as 'Leave unbound' and the plan as 'shared' then click *CREATE*
+
+Now that we have a service we need to find out the service credentials so that we can add these as system variables to our local environment. Currently on Bluemix to find out the credentials of a service we have to bind the service to an app but this should change soon. If you already have an app in Bluemix jump to step 5 if not follow the instructions to create an app and bind the service:
+
+1. In the Bluemix dashboard select *CREATE APP*
+2. Choose *WEB*
+3. Select the *Liberty for Java* starter and click continue
+4. Give the app a name and click Finish
+5. Navigate to the *Overview* section of your application and select *BIND A SERVICE OR API*
+6. Select your cloudant service and click *ADD* (Bluemix will prompt you to restage your app, you can click cancel to this)
+7. Select the arrow next to *Show Credentials* on your service, these are the credentials you will need for your system environment variables
+
+Once you have created your service and found out the credentials you need to create system environment variables as follows:
+
+1. Save the "username" as "dbUsername"
+2. "password" as "dbPassword
+3. "url" as "dbUrl"
+
+You can now unbind your service by selecting the settings cog on the service but make sure not to delete the service completely.
+
+#### Adding content to your database
+
+Open your cloudant service in Bluemix and select *Launch*, this will open the Api for cloudant. In the databases tab create a new database called 'items'.
+
 #### Running Liberty and the sample application from WDT
 You're now ready to run your application.
 
 1.  Select the `12-factor-application` project
 2.  Right-click -> *Run As... -> Run On Server*
 3.  Select the "WebShere Application Server under localhost" folder, and select *Finish*
-4a.  Confirm web browser opens on "http://localhost:9082/12-factor-application/rest" with message 'Hello this is a response'
-4b. Alternatively open a browser on "http://localhost:9082/12-factor-application/Test" to see a 'hello world' message from the servlet
+4. Confirm web browser opens on "http://localhost:9082/12-factor-application/rest" and displays a list of all the databases and the content of the "items" database.
+5. Alternatively open a browser on "http://localhost:9082/12-factor-application/Test" to see a 'hello world' message from the servlet
+
+#### Deploying the application onto Bluemix
+The application can also be deployed onto Bluemix to run:
+
+###### Deploying through Eclipse
+
+1. Create a Bluemix server in the servers tab of Eclipse: *New -> Server* select IBM Bluemix and enter your credentials
+2. Run the application on the Bluemix server by right clicking on the `12-factor-application` project and selecting *Run as... -> Run on server* and selecting the new Bluemix server
+3. Once the app has started on Bluemix go to the dashboard and open the application
+4. Click *BIND A SERVICE OR API* and select your Cloudant service that you created earlier
+5. You are finished, to access the app you need to find the route that is displayed at the top of the *Overview* tab in Bluemix then visit `<route>/rest/` to display the database information
+
+###### Deploying through the command line
+
+To deploy from the command line you need to push the war that has been copied into the '12-factor-wlpcfg' project to Bluemix:
+
+```bash
+$ cf push <myappname> -p <path to war>
+```
+
+then following steps 3-5 under Deploying to Eclipse.
+
+###### Note
+
+The Liberty on Bluemix currently still has the beta version of jaxrs-2.0 so you will need to add these environment variables to your application:
+
+1. Name: IBM_LIBERTY_BETA Value: true
+2. Name: JBP_CONFIG_LIBERTY Value: app_archive: {features [servlet-3.1, jaxrs-2.0, jsonp-1.0]}
 
 ## Notice
 

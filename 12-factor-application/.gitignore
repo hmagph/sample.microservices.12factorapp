@@ -4,3 +4,5 @@
 /.project
 /.gradle
 /bin
+/.apt_generated
+/.factorypath
