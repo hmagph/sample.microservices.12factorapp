@@ -143,6 +143,17 @@ You're now ready to run your application.
 4. Confirm web browser opens on "http://localhost:9082/12-factor-application/rest" and displays a list of all the databases and the content of the "items" database.
 5. Alternatively open a browser on "http://localhost:9082/12-factor-application/Test" to see a 'hello world' message from the servlet
 
+#### Deploying the application onto Bluemix
+The application can also be deployed onto Bluemix to run:
+
+###### Deploying through Eclipse
+
+1. Create a Bluemix server in the servers tab of Eclipse: *New -> Server* select IBM Bluemix and enter your credentials
+2. Run the application on the Bluemix server by right clicking on the `12-factor-application` project and selecting *Run as... -> Run on server* and selecting the new Bluemix server
+3. Once the app has started on Bluemix go to the dashboard and open the application
+4. Click *BIND A SERVICE OR API* and select your Cloudant service that you created earlier
+5. You are finished, to access the app you need to find the route that is displayed at the top of the *Overview* tab in Bluemix then visit <route>/rest/ to display the database information
+
 ## Notice
 
 © Copyright IBM Corporation 2015.
