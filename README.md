@@ -164,6 +164,13 @@ $ cf push <myappname> -p <path to war>
 
 then following steps 3-5 under Deploying to Eclipse.
 
+###### Note
+
+The Liberty on Bluemix currently still has the beta version of jaxrs-2.0 so you will need to add these environment variables to your application:
+
+1. Name: IBM_LIBERTY_BETA Value: true
+2. Name: JBP_CONFIG_LIBERTY Value: app_archive: {features [servlet-3.1, jaxrs-2.0, jsonp-1.0]}
+
 ## Notice
 
 © Copyright IBM Corporation 2015.
