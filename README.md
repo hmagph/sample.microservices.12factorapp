@@ -1,6 +1,34 @@
 # Twelve-Factor Applications with Liberty
 
-This will be a sample for creating a twelve-factor app using WAS Liberty. A twelve-factor app is an application that follows the methodology described here: [12factor.net](12factor.net). It is also a great methodology to use when creating microservices, so watch this space!
+This sample contains an example for a Twelve-Factor Application that can be run on Liberty and Bluemix. A Twelve-Factor App is an application that follows the methodology described here: [12factor.net](12factor.net) and is also a great methodology to use when following a microservices architecture.
+
+* Building this sample:
+** [Building with Maven](#building-with-maven)
+** [Building with Gradle](#building-with-gradle)
+* [Downloading WAS Liberty(#downloading-was-liberty)
+* [Creating a Cloudant database on bluemix](#creating-a-cloudant-database-on-bluemix)
+* Starting the server:
+** [Using Eclipse and WebSphere Development Tools (WDT)](#eclipse--wdt)
+
+## Building with Maven
+
+This sample can be build using [Apache Maven](http://maven.apache.org/).
+
+```bash
+$ mvn install
+```
+ In addition to publishing the war to the local maven repository, the built war file is copied into the apps directory of the server configuration located in the 12-factor-wlpcfg directory:
+
+```text
+12-factor-wlpcfg
+ +- servers
+     +- 12FactorAppServer                      <-- specific server configuration
+        +- server.xml                          <-- server configuration
+        +- apps                                <- directory for applications
+           +- 12-factor-application.war        <- sample application
+        +- logs                                <- created by running the server locally
+        +- workarea                            <- created by running the server locally
+```
 
 ## Building with Gradle
 
@@ -105,7 +133,7 @@ If the '12-factor-wlpcfg' project does not appear in the dialog to add a project
 
 #### Creating a Cloudant database on Bluemix
 
-This sample connects to a Cloudant database that will be hosted on Bluemix. You sign up for a free 30-day trial of [Bluemix](www.bluemix.net).
+This sample connects to a Cloudant database that will be hosted on Bluemix. You sign up for a free 30-day trial of [Bluemix][bluemix].
 Once you are logged into Bluemix go to your dashboard to create a cloudant service:
 
 1. Select *USE SERVICES OR APIS*
@@ -129,6 +157,8 @@ Once you have created your service and found out the credentials you need to cre
 3. "url" as "dbUrl"
 
 You can now unbind your service by selecting the settings cog on the service but make sure not to delete the service completely.
+
+[bluemix]: www.bluemix.net
 
 #### Adding content to your database
 
