@@ -5,10 +5,12 @@ This sample contains an example for a Twelve-Factor Application that can be run 
 * Building this sample:
 	* [Building with Maven](#building-with-maven)
 	* [Building with Gradle](#building-with-gradle)
-* [Downloading WAS Liberty(#downloading-was-liberty)
+* [Downloading WAS Liberty](#downloading-was-liberty)
 * [Creating a Cloudant database on bluemix](#creating-a-cloudant-database-on-bluemix)
-* Starting the server:
-	* [Using Eclipse and WebSphere Development Tools (WDT)](#eclipse--wdt)
+* Running the application:
+	* Starting the local server using [Eclipse and WebSphere Development Tools (WDT)](#eclipse--wdt)
+	* Deploying the application onto [Bluemix](#deploying-the-application-onto-bluemix)
+	
 
 ## Building with Maven
 
@@ -131,7 +133,17 @@ Before creating a server you need a runtime environment for your server to be ba
 ###### Note
 If the '12-factor-wlpcfg' project does not appear in the dialog to add a project to the User Directory make sure there is a 'shared' folder in the 12-factor-wlpcfg project with an empty .gitkeep file inside it.
 
-#### Creating a Cloudant database on Bluemix
+#### Running the sample application
+
+Before running the application you need to create a [Cloudant database on Bluemix](creating-a-cloudant-databse-on-bluemix). Once this is done you are ready to run your application.
+
+1.  Select the `12-factor-application` project
+2.  Right-click -> *Run As... -> Run On Server*
+3.  Select the "WebShere Application Server under localhost" folder, and select *Finish*
+4. Confirm web browser opens on "http://localhost:9082/12-factor-application/rest" and displays a list of all the databases and the content of the "items" database.
+5. Alternatively open a browser on "http://localhost:9082/12-factor-application/Test" to see a 'hello world' message from the servlet
+
+## Creating a Cloudant database on Bluemix
 
 This sample connects to a Cloudant database that will be hosted on Bluemix. You sign up for a free 30-day trial of [Bluemix][bluemix].
 Once you are logged into Bluemix go to your dashboard to create a cloudant service:
@@ -164,19 +176,12 @@ You can now unbind your service by selecting the settings cog on the service but
 
 Open your cloudant service in Bluemix and select *Launch*, this will open the Api for cloudant. In the databases tab create a new database called 'items'.
 
-#### Running Liberty and the sample application from WDT
-You're now ready to run your application.
+Once your cloudant service has been created with a database called 'items' you can [run the application locally](#running-the-sample-application) or [deploy the application to Bluemix](deploying-the-application-onto-bluemix).
 
-1.  Select the `12-factor-application` project
-2.  Right-click -> *Run As... -> Run On Server*
-3.  Select the "WebShere Application Server under localhost" folder, and select *Finish*
-4. Confirm web browser opens on "http://localhost:9082/12-factor-application/rest" and displays a list of all the databases and the content of the "items" database.
-5. Alternatively open a browser on "http://localhost:9082/12-factor-application/Test" to see a 'hello world' message from the servlet
-
-#### Deploying the application onto Bluemix
+## Deploying the application onto Bluemix
 The application can also be deployed onto Bluemix to run:
 
-###### Deploying through Eclipse
+#### Deploying through Eclipse
 
 1. Create a Bluemix server in the servers tab of Eclipse: *New -> Server* select IBM Bluemix and enter your credentials
 2. Run the application on the Bluemix server by right clicking on the `12-factor-application` project and selecting *Run as... -> Run on server* and selecting the new Bluemix server
@@ -184,7 +189,7 @@ The application can also be deployed onto Bluemix to run:
 4. Click *BIND A SERVICE OR API* and select your Cloudant service that you created earlier
 5. You are finished, to access the app you need to find the route that is displayed at the top of the *Overview* tab in Bluemix then visit `<route>/rest/` to display the database information
 
-###### Deploying through the command line
+#### Deploying through the command line
 
 To deploy from the command line you need to push the war that has been copied into the '12-factor-wlpcfg' project to Bluemix:
 
@@ -194,7 +199,7 @@ $ cf push <myappname> -p <path to war>
 
 then following steps 3-5 under Deploying to Eclipse.
 
-###### Note
+#### Note
 
 The Liberty on Bluemix currently still has the beta version of jaxrs-2.0 so you will need to add these environment variables to your application:
 
