@@ -3,12 +3,12 @@
 This sample contains an example for a Twelve-Factor Application that can be run on Liberty and Bluemix. A Twelve-Factor App is an application that follows the methodology described here: [12factor.net](12factor.net) and is also a great methodology to use when following a microservices architecture.
 
 * Building this sample:
-** [Building with Maven](#building-with-maven)
-** [Building with Gradle](#building-with-gradle)
+	* [Building with Maven](#building-with-maven)
+	* [Building with Gradle](#building-with-gradle)
 * [Downloading WAS Liberty(#downloading-was-liberty)
 * [Creating a Cloudant database on bluemix](#creating-a-cloudant-database-on-bluemix)
 * Starting the server:
-** [Using Eclipse and WebSphere Development Tools (WDT)](#eclipse--wdt)
+	* [Using Eclipse and WebSphere Development Tools (WDT)](#eclipse--wdt)
 
 ## Building with Maven
 
@@ -158,7 +158,7 @@ Once you have created your service and found out the credentials you need to cre
 
 You can now unbind your service by selecting the settings cog on the service but make sure not to delete the service completely.
 
-[bluemix]: www.bluemix.net
+[bluemix]: https://console.ng.bluemix.net/
 
 #### Adding content to your database
 
