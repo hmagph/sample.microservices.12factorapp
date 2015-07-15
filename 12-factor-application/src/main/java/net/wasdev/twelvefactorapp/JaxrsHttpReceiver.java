@@ -32,12 +32,14 @@ public class JaxrsHttpReceiver {
 	}
 	
 	public String getDatabaseFiles(String extension) throws NullPointerException, IOException {
+		System.out.println("Getting database files for extension" + extension);
 		// Has been configured to match the cloudant database that we own in bluemix.
 		String[] credentials = getCredentials();
 		String username = credentials[0];
 		String password = credentials[1];
 		String url = credentials[2];
 		String fullUrl = url + extension;
+		System.out.println("Found url " + fullUrl);
 		
 		String usernameAndPassword = username + ":" + password;
 				

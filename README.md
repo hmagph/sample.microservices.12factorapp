@@ -1,6 +1,36 @@
 # Twelve-Factor Applications with Liberty
 
-This will be a sample for creating a twelve-factor app using WAS Liberty. A twelve-factor app is an application that follows the methodology described here: [12factor.net](12factor.net). It is also a great methodology to use when creating microservices, so watch this space!
+This sample contains an example for a Twelve-Factor Application that can be run on Liberty and Bluemix. A Twelve-Factor App is an application that follows the methodology described here: [12factor.net](12factor.net) and is also a great methodology to use when following a microservices architecture.
+
+* Building this sample:
+	* [Building with Maven](#building-with-maven)
+	* [Building with Gradle](#building-with-gradle)
+* [Downloading WAS Liberty](#downloading-was-liberty)
+* [Creating a Cloudant database on bluemix](#creating-a-cloudant-database-on-bluemix)
+* Running the application:
+	* Starting the local server using [Eclipse and WebSphere Development Tools (WDT)](#eclipse--wdt)
+	* Deploying the application onto [Bluemix](#deploying-the-application-onto-bluemix)
+	
+
+## Building with Maven
+
+This sample can be build using [Apache Maven](http://maven.apache.org/).
+
+```bash
+$ mvn install
+```
+ In addition to publishing the war to the local maven repository, the built war file is copied into the apps directory of the server configuration located in the 12-factor-wlpcfg directory:
+
+```text
+12-factor-wlpcfg
+ +- servers
+     +- 12FactorAppServer                      <-- specific server configuration
+        +- server.xml                          <-- server configuration
+        +- apps                                <- directory for applications
+           +- 12-factor-application.war        <- sample application
+        +- logs                                <- created by running the server locally
+        +- workarea                            <- created by running the server locally
+```
 
 ## Building with Gradle
 
@@ -103,9 +133,19 @@ Before creating a server you need a runtime environment for your server to be ba
 ###### Note
 If the '12-factor-wlpcfg' project does not appear in the dialog to add a project to the User Directory make sure there is a 'shared' folder in the 12-factor-wlpcfg project with an empty .gitkeep file inside it.
 
-#### Creating a Cloudant database on Bluemix
+#### Running the sample application
 
-This sample connects to a Cloudant database that will be hosted on Bluemix. You sign up for a free 30-day trial of [Bluemix](www.bluemix.net).
+Before running the application you need to create a [Cloudant database on Bluemix](creating-a-cloudant-databse-on-bluemix). Once this is done you are ready to run your application.
+
+1.  Select the `12-factor-application` project
+2.  Right-click -> *Run As... -> Run On Server*
+3.  Select the "WebShere Application Server under localhost" folder, and select *Finish*
+4. Confirm web browser opens on "http://localhost:9082/12-factor-application/" and displays a list of all the databases and the content of the "items" database.
+5. Alternatively open a browser on "http://localhost:9082/12-factor-application/Test" to see a 'hello world' message from the servlet
+
+## Creating a Cloudant database on Bluemix
+
+This sample connects to a Cloudant database that will be hosted on Bluemix. You sign up for a free 30-day trial of [Bluemix][bluemix].
 Once you are logged into Bluemix go to your dashboard to create a cloudant service:
 
 1. Select *USE SERVICES OR APIS*
@@ -130,46 +170,30 @@ Once you have created your service and found out the credentials you need to cre
 
 You can now unbind your service by selecting the settings cog on the service but make sure not to delete the service completely.
 
+[bluemix]: https://console.ng.bluemix.net/
+
 #### Adding content to your database
 
 Open your cloudant service in Bluemix and select *Launch*, this will open the Api for cloudant. In the databases tab create a new database called 'items'.
 
-#### Running Liberty and the sample application from WDT
-You're now ready to run your application.
+Once your cloudant service has been created with a database called 'items' you can [run the application locally](#running-the-sample-application) or [deploy the application to Bluemix](deploying-the-application-onto-bluemix).
 
-1.  Select the `12-factor-application` project
-2.  Right-click -> *Run As... -> Run On Server*
-3.  Select the "WebShere Application Server under localhost" folder, and select *Finish*
-4. Confirm web browser opens on "http://localhost:9082/12-factor-application/rest" and displays a list of all the databases and the content of the "items" database.
-5. Alternatively open a browser on "http://localhost:9082/12-factor-application/Test" to see a 'hello world' message from the servlet
-
-#### Deploying the application onto Bluemix
-The application can also be deployed onto Bluemix to run:
-
-###### Deploying through Eclipse
-
-1. Create a Bluemix server in the servers tab of Eclipse: *New -> Server* select IBM Bluemix and enter your credentials
-2. Run the application on the Bluemix server by right clicking on the `12-factor-application` project and selecting *Run as... -> Run on server* and selecting the new Bluemix server
-3. Once the app has started on Bluemix go to the dashboard and open the application
-4. Click *BIND A SERVICE OR API* and select your Cloudant service that you created earlier
-5. You are finished, to access the app you need to find the route that is displayed at the top of the *Overview* tab in Bluemix then visit `<route>/rest/` to display the database information
-
-###### Deploying through the command line
-
-To deploy from the command line you need to push the war that has been copied into the '12-factor-wlpcfg' project to Bluemix:
+## Deploying the application onto Bluemix
+The application can also be deployed onto Bluemix to run. First you will need to download the [Cloud Foundry command line interface][cloudfoundry], this can be used to deploy and manage applications on Bluemix. To tell the Liberty buildpack which features we need there is a manifest.yml file in the 12-factor-wlpcfg project that defines the JPB_CONFIG_LIBERTY environment variable. When we push the application we need to tell Bluemix where to find this manifest.yml file.
 
 ```bash
-$ cf push <myappname> -p <path to war>
+$ \path\to\servers\12FactorAppServer\apps> cf push -p 12-factor-application.war -f ..\manifest.yml
 ```
 
-then following steps 3-5 under Deploying to Eclipse.
+[cloudfoundry]: https://www.ng.bluemix.net/docs/starters/install_cli.html
 
-###### Note
+#### Running the sample application on Bluemix
 
-The Liberty on Bluemix currently still has the beta version of jaxrs-2.0 so you will need to add these environment variables to your application:
+Once the app has been deployed to Bluemix it should start automatically. You can start, stop and view that status of your app on the Bluemix dashboard. To check that your application is running successfully you just need to visit the route displayed at the top of the overview tab of your app. You should see a list of the databases in your Cloudant instance and a list of the documents in the 'items' database.
 
-1. Name: IBM_LIBERTY_BETA Value: true
-2. Name: JBP_CONFIG_LIBERTY Value: app_archive: {features [servlet-3.1, jaxrs-2.0, jsonp-1.0]}
+#### Note
+
+The Liberty on Bluemix currently still has the beta version of jaxrs-2.0 so the manifest.yml also includes the environent variable IBM_LIBERTY_BETA Value: true.
 
 ## Notice
 

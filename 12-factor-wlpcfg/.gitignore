@@ -9,3 +9,5 @@
 
 /bin
 /servers/.classCache
+/target
+/target/*
