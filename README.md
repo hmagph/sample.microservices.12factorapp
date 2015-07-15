@@ -140,7 +140,7 @@ Before running the application you need to create a [Cloudant database on Bluemi
 1.  Select the `12-factor-application` project
 2.  Right-click -> *Run As... -> Run On Server*
 3.  Select the "WebShere Application Server under localhost" folder, and select *Finish*
-4. Confirm web browser opens on "http://localhost:9082/12-factor-application/rest" and displays a list of all the databases and the content of the "items" database.
+4. Confirm web browser opens on "http://localhost:9082/12-factor-application/" and displays a list of all the databases and the content of the "items" database.
 5. Alternatively open a browser on "http://localhost:9082/12-factor-application/Test" to see a 'hello world' message from the servlet
 
 ## Creating a Cloudant database on Bluemix
@@ -186,6 +186,10 @@ $ \path\to\servers\12FactorAppServer\apps> cf push -p 12-factor-application.war 
 ```
 
 [cloudfoundry]: https://www.ng.bluemix.net/docs/starters/install_cli.html
+
+#### Running the sample application on Bluemix
+
+Once the app has been deployed to Bluemix it should start automatically. You can start, stop and view that status of your app on the Bluemix dashboard. To check that your application is running successfully you just need to visit the route displayed at the top of the overview tab of your app. You should see a list of the databases in your Cloudant instance and a list of the documents in the 'items' database.
 
 #### Note
 
