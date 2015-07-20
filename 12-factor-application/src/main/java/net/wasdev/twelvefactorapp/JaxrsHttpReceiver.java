@@ -10,6 +10,7 @@ import javax.json.JsonObject;
 import javax.json.JsonReader;
 import javax.json.JsonString;
 import javax.ws.rs.GET;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.client.Client;
@@ -31,9 +32,16 @@ public class JaxrsHttpReceiver {
 		return Response.ok("All databases: " + dbFiles + "Items database: " + items).build();
 	}
 	
+	@PUT
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response putResponse(String databaseName) throws NullPointerException, IOException {
+		String contents = createDatabase(databaseName);
+		return Response.ok("Response is " + contents).build();
+	}
+	
 	public String getDatabaseFiles(String extension) throws NullPointerException, IOException {
 		System.out.println("Getting database files for extension" + extension);
-		// Has been configured to match the cloudant database that we own in bluemix.
+
 		String[] credentials = getCredentials();
 		String username = credentials[0];
 		String password = credentials[1];
@@ -53,9 +61,33 @@ public class JaxrsHttpReceiver {
 		String contents = httpResponse.readEntity(String.class);
 		httpResponse.close();
 		return contents;
-		
 	}
 	
+	public String createDatabase(String name) throws NullPointerException, IOException {
+		System.out.println("Creating database called " + databaseName);
+
+		String[] credentials = getCredentials();
+		String username = credentials[0];
+		String password = credentials[1];
+		String url = credentials[2];
+		String fullUrl = url + "/" + databaseName;
+		System.out.println("Found url " + fullUrl);		
+		String usernameAndPassword = username + ":" + password;
+				
+		String authorizationHeaderName = "Authorization";
+		String authorizationHeaderValue = "Basic " + javax.xml.bind.DatatypeConverter.printBase64Binary(usernameAndPassword.getBytes());		
+		
+		Client client = ClientBuilder.newClient();
+		WebTarget target = client.target(fullUrl);
+		Invocation.Builder invoBuild  = target.request(MediaType.APPLICATION_JSON).header(authorizationHeaderName, authorizationHeaderValue);
+		Response httpResponse = invoBuild.buildPut(null).invoke();
+		String contents = httpResponse.readEntity(String.class);
+		httpResponse.close();
+		return contents;
+	}
+	
+	// This method will either pull the database credentials from VCAP_SERVICES as provided by Bluemix or 
+	// it will search for the environment variables dbUsername, dbPassword and dbUrl to get the credentials
 	public String [] getCredentials() throws NullPointerException, IOException {
 		String dbUsername = null;
 		String dbPassword = null;
