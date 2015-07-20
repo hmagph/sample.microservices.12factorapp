@@ -28,3 +28,7 @@ This sample can be build using [Apache Maven](http://maven.apache.org/).
 ```bash
 $ mvn install
 ```
+
+## Next step:
+
+[Downloading WAS Liberty](/docs/Downloading-WAS-Liberty.md)
