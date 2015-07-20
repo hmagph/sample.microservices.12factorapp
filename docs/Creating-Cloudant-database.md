@@ -37,4 +37,4 @@ Open your cloudant service in Bluemix and select *Launch*, this will open the Ap
 Once your cloudant service has been created with a database called 'items' you can:
 
 * [Run the application locally](/docs/Using-WDT.md#running-the-sample-application), or
-* [Deploy the application to Bluemix](deploying-the-application-onto-bluemix).
+* [Deploy the application to Bluemix](/docs/Deploying-application-to-Bluemix.md).

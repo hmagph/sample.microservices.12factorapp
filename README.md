@@ -1,6 +1,6 @@
 # Twelve-Factor Applications with Liberty
 
-This sample contains an example for a Twelve-Factor Application that can be run on Liberty and Bluemix. A Twelve-Factor App is an application that follows the methodology described here: [12factor.net](12factor.net) and is also a great methodology to use when following a microservices architecture.
+This sample contains an example for a Twelve-Factor Application that can be run on Liberty and Bluemix. A Twelve-Factor App is an application that follows the methodology described here: [12factor.net](http://www.12factor.net) and is also a great methodology to use when following a microservices architecture.
 
 * Building this sample:
 	* [Building with Gradle](/docs/Building-the-sample.md#building-with-gradle)

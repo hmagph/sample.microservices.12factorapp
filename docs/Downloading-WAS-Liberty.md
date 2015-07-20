@@ -1,6 +1,6 @@
 There are lots of ways to get your hands on WAS Liberty. Note that you will need a version of Liberty that has support for Servlet 3.1 and Jaxrs 2.0 for this sample (Java EE 7 Web Profile will do).
 
-To download just the WAS Liberty runtime, go to the [wasdev.net Downloads page][wasdev], and choose between the [latest version of the runtime][wasdev-latest] or the [latest beta][wasdev-beta]. You can also download Liberty via [Eclipse and WDT](/wiki/#eclipse--wdt)
+To download just the WAS Liberty runtime, go to the [wasdev.net Downloads page][wasdev], and choose between the [latest version of the runtime][wasdev-latest] or the [latest beta][wasdev-beta]. You can also download Liberty via [Eclipse and WDT](/docs/Using-WDT.md)
 
 There are a few options to choose from (especially for the beta drivers). Choose the one that is most appropriate.
 * There are convenience archives for downloading pre-defined content groupings
