@@ -3,70 +3,13 @@
 This sample contains an example for a Twelve-Factor Application that can be run on Liberty and Bluemix. A Twelve-Factor App is an application that follows the methodology described here: [12factor.net](12factor.net) and is also a great methodology to use when following a microservices architecture.
 
 * Building this sample:
-	* [Building with Maven](#building-with-maven)
-	* [Building with Gradle](#building-with-gradle)
-* [Downloading WAS Liberty](#downloading-was-liberty)
+	* [Building with Gradle](/docs/Building-the-sample.md#building-with-gradle)
+	* [Building with Maven](/docs/Building-the-sample.md#building-with-maven)
+* [Downloading WAS Liberty](/docs/Downloading-WAS-Liberty.md)
 * [Creating a Cloudant database on bluemix](#creating-a-cloudant-database-on-bluemix)
 * Running the application:
 	* Starting the local server using [Eclipse and WebSphere Development Tools (WDT)](#eclipse--wdt)
 	* Deploying the application onto [Bluemix](#deploying-the-application-onto-bluemix)
-	
-
-## Building with Maven
-
-This sample can be build using [Apache Maven](http://maven.apache.org/).
-
-```bash
-$ mvn install
-```
- In addition to publishing the war to the local maven repository, the built war file is copied into the apps directory of the server configuration located in the 12-factor-wlpcfg directory:
-
-```text
-12-factor-wlpcfg
- +- servers
-     +- 12FactorAppServer                      <-- specific server configuration
-        +- server.xml                          <-- server configuration
-        +- apps                                <- directory for applications
-           +- 12-factor-application.war        <- sample application
-        +- logs                                <- created by running the server locally
-        +- workarea                            <- created by running the server locally
-```
-
-## Building with Gradle
-
-This sample can be built using [Gradle](http://gradle.org/).
-
-```bash
-$ gradle build publishToMavenLocal
-```
-
-The build.gradle files are configured such that, in addition to publishing the war to the local maven repository, the built war file is copied into the apps directory of the server configuration located in the 12-factor-wlpcfg directory:
-
-```text
-12-factor-wlpcfg
- +- servers
- 	 +- 12FactorAppServer					<-- specific server configuration
- 	 	+- server.xml						<-- server configuration
- 	 	+- apps								<-- directory for applications
- 	 		+- 12-factor-application.war	<-- sample application
- 	 	+- logs								<-- created by running the server locally
- 	 	+- workarea							<-- created by running the server locally
-```
-
-## Downloading WAS Liberty
-
-For this sample you will need a version of Liberty that has support for Servlet 3.1 and Jaxrs 2.0.
-
-To download just the WAS liberty runtime, go to [wasdev.net Downloads page][wasdev], and choose between the [latest version of the runtime][wasdev-latest] or the [latest beta][wasdev-beta]. You can also download Liberty via [Eclipse and WDT](#eclipse--wdt).
-
-There are a few options to choose from (especially for the beta drivers): choose the one that is most appropriate.
-* There are convenience archives for downloading pre-defined content groupings,
-* You can add additional features from the repository using the [installUtility][installUtility] or the liberty-maven-plugin and [Gradle plugins](https://github.com/WASdev/ci.gradle).
-
-[wasdev]: https://developer.ibm.com/wasdev/downloads/
-[wasdev-latest]: https://developer.ibm.com/wasdev/downloads/liberty-profile-using-non-eclipse-environments/
-[wasdev-beta]: https://developer.ibm.com/wasdev/downloads/liberty-profile-beta/
-[installUtility]: http://www-01.ibm.com/support/knowledgecenter/#!/was_beta_liberty/com.ibm.websphere.wlp.nd.multiplatform.doc/ae/rwlp_command_installutility.html
 
 ## Eclipse / WDT
 
