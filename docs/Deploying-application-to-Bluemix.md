@@ -1,11 +1,23 @@
 ## Deploying the application onto Bluemix
-The application can also be deployed onto Bluemix to run. First you will need to download the [Cloud Foundry command line interface][cloudfoundry], this can be used to deploy and manage applications on Bluemix. To tell the Liberty buildpack which features we need there is a manifest.yml file in the 12-factor-wlpcfg project that defines the JPB_CONFIG_LIBERTY environment variable. When we push the application we need to tell Bluemix where to find this manifest.yml file.
+
+There are two ways to do this:
+* [Using the Cloud Foundry command line interface](#deploying-the-application-using-the-command-line)
+* [Using Eclipse, WebSphere Developer Tools (WDT) and the Bluemix Eclipse plugin](#deploying-the-application-using-eclipse)
+
+#### Deploying the application using the command line
+
+First you will need to download the [Cloud Foundry command line interface][cloudfoundry], this can be used to deploy and manage applications on Bluemix. Next we need to configure the environment variables that will specify the credentials of Cloudant. (If you haven't created a Cloudant database yet see ['Creating a Cloudant database'](/docs/Creating-Cloudant-database.md).) This can be specified in the manifest.yml file provided in the application (TODO: do we really want to do this? If we are adding the services probably yes!) Then we simply push the zip file containing our packaged server to Bluemix.
 
 ```bash
-$ \path\to\servers\12FactorAppServer\apps> cf push -p 12-factor-application.war -f ..\manifest.yml
+$ \path\to\12-factor-application\build\libs> cf push <appName> -p 12FactorApp.zip -f manifest.yml
 ```
 
+Bluemix will use the manifest.yml file we provided as long as it is in the same directory as the zip we are pushing and will add the environment variables to our application.
 [cloudfoundry]: https://www.ng.bluemix.net/docs/starters/install_cli.html
+
+#### Deploying the application using Eclipse
+
+To push applications to Bluemix from Eclipse you need the [IBM Eclipse Tools for Bluemix][eclipse-bluemix]. In Eclipse go to *help -> Eclipse Marketplace* and search for Bluemix. Once you have downloaded the tools you should be able to create a Bluemix server by right clicking in the servers tab, selecting *new > server*, selecting the server type *IBM Bluemix* and entering your Bluemix credentials. To push the application to Bluemix simply drag and drop the 12FactorApp.zip file into the Bluemix server.
 
 #### Running the sample application on Bluemix
 
