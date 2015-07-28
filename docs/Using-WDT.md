@@ -81,7 +81,7 @@ If the '12-factor-wlpcfg' project does not appear in the dialog to add a project
 
 #### Running the sample application
 
-Before running the application you need to create a [Cloudant database on Bluemix](/docs/Creating-Cloudant-database.md). Once this is done you are ready to run your application.
+Before running the application you need to create a [Cloudant database on Bluemix](/docs/Creating-Cloudant-database.md). Make sure you have set the system environment variables 'dbUsername', 'dbPassword' and 'dbUrl' then you are ready to run your application.
 
 1.  Select the `12-factor-application` project
 2.  Right-click -> *Run As... -> Run On Server*

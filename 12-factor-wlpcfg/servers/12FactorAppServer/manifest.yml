@@ -1,6 +1,0 @@
----
-applications:
-- name: 12-factor-application
-env:
-  IBM_LIBERTY_BETA: true
-  JBP_CONFIG_LIBERTY: '[app_archive: {features: [servlet-3.1, jaxrs-2.0, jsonp-1.0]}]'
