@@ -6,15 +6,17 @@ apply plugin: 'liberty'
 buildscript {
 	repositories {
 		mavenLocal()
-		mavenCentral()
+		
 		maven {
 			name = 'Sonatype Nexus Snapshots'
 			url = 'https://oss.sonatype.org/content/repositories/snapshots/'
 		}
+		mavenCentral()
 	}
 	dependencies {
 		classpath 'net.wasdev.wlp.gradle.plugins:liberty-gradle-plugin:1.0-SNAPSHOT'
-		classpath files('C:/LibertyV9/wlp/bin/tools/ws-server.jar')
+		classpath files('gradle/wlp-anttasks.jar')
+		//classpath files('C:/LibertyInstallTest2/wlp/bin/tools/ws-server.jar')
 	}
 }
 
@@ -43,14 +45,14 @@ task publishWar(dependsOn: 'jar', type: Copy) {
 }
 
 liberty {
-	wlpDir = 'C:/LibertyInstallTest/wlp'
+	wlpDir = 'C:/LibertyInstallTest2/wlp'
 	serverName = '12FactorAppServer'
 	userDir = '../12-factor-wlpcfg'
 	
 	install {
 		licenseCode = '<licenseCode>'
 		version = '8.5.5_06'
-		baseDir = 'C:/LibertyInstallTest'
+		baseDir = 'C:/LibertyInstallTest2'
 	}
 	
 	packageLiberty {
