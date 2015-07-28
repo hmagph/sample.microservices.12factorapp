@@ -5,10 +5,8 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import javax.json.Json;
-import javax.json.JsonArray;
 import javax.json.JsonObject;
 import javax.json.JsonReader;
-import javax.json.JsonString;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
@@ -31,7 +29,11 @@ public class JaxrsHttpReceiver {
 	public Response getResponse() throws NullPointerException, IOException {
 		String dbFiles = getDatabaseFiles("/_all_dbs");
 		String items = getDatabaseFiles("/" + databaseName + "/_all_docs");
-		return Response.ok("All databases: " + dbFiles + "Items database: " + items).build();
+		if (dbFiles != null && items != null) {
+			return Response.ok("All databases: " + dbFiles + "Items database: " + items).build();
+		} else {
+			return Response.ok("Database credentials not found").build();
+		}
 	}
 	
 	@PUT
@@ -79,23 +81,27 @@ public class JaxrsHttpReceiver {
 		System.out.println("Creating database called " + name);
 
 		String[] credentials = getCredentials();
-		String username = credentials[0];
-		String password = credentials[1];
-		String url = credentials[2];
-		String fullUrl = url + "/" + name;
-		System.out.println("Found url " + fullUrl);		
-		String usernameAndPassword = username + ":" + password;
-				
-		String authorizationHeaderName = "Authorization";
-		String authorizationHeaderValue = "Basic " + javax.xml.bind.DatatypeConverter.printBase64Binary(usernameAndPassword.getBytes());		
-		
-		Client client = ClientBuilder.newClient();
-		WebTarget target = client.target(fullUrl);
-		Invocation.Builder invoBuild  = target.request(MediaType.APPLICATION_JSON).header(authorizationHeaderName, authorizationHeaderValue);
-		Response httpResponse = invoBuild.buildPut(null).invoke();
-		String contents = httpResponse.readEntity(String.class);
-		httpResponse.close();
-		return contents;
+		if (credentials != null) {
+			String username = credentials[0];
+			String password = credentials[1];
+			String url = credentials[2];
+			String fullUrl = url + "/" + name;
+			System.out.println("Found url " + fullUrl);		
+			String usernameAndPassword = username + ":" + password;
+					
+			String authorizationHeaderName = "Authorization";
+			String authorizationHeaderValue = "Basic " + javax.xml.bind.DatatypeConverter.printBase64Binary(usernameAndPassword.getBytes());		
+			
+			Client client = ClientBuilder.newClient();
+			WebTarget target = client.target(fullUrl);
+			Invocation.Builder invoBuild  = target.request(MediaType.APPLICATION_JSON).header(authorizationHeaderName, authorizationHeaderValue);
+			Response httpResponse = invoBuild.buildPut(null).invoke();
+			String contents = httpResponse.readEntity(String.class);
+			httpResponse.close();
+			return contents;
+		} else {
+			return null;
+		}
 	}
 	
 	public String storeData(JsonObject data) throws NullPointerException, IOException {
@@ -128,27 +134,14 @@ public class JaxrsHttpReceiver {
 		String dbUsername = null;
 		String dbPassword = null;
 		String dbUrl = null;
-		// If there is a VCAP_SERVICES use that json object
-		String VCAP_SERVICES = System.getenv("VCAP_SERVICES");
-		if (VCAP_SERVICES != null) {
-			InputStream is = new ByteArrayInputStream(VCAP_SERVICES.getBytes());
-			JsonReader reader = Json.createReader(is);
-			JsonObject jsonObj = reader.readObject();
-			JsonArray services = (JsonArray) jsonObj.get("cloudantNoSQLDB");
-			for (Object service : services) {
-				JsonObject cloudantService = (JsonObject) service;
-				JsonObject credentials = (JsonObject) cloudantService.get("credentials");
-				dbUsername = ((JsonString) credentials.get("username")).getString();
-				dbPassword = ((JsonString) credentials.get("password")).getString();
-				dbUrl = ((JsonString) credentials.get("url")).getString();
-				System.out.println(dbUsername + " " + dbPassword + " " + dbUrl);
-			}
+		dbUsername = System.getenv("dbUsername");
+		dbPassword = System.getenv("dbPassword");
+		dbUrl = System.getenv("dbUrl");
+		if (dbUsername != null && dbPassword != null && dbUrl != null) {
+			String[] dbCredentials = {dbUsername, dbPassword, dbUrl};
+			return dbCredentials;
 		} else {
-			dbUsername = System.getenv("dbUsername");
-			dbPassword = System.getenv("dbPassword");
-			dbUrl = System.getenv("dbUrl");
+			return null;
 		}
-		String[] dbCredentials = {dbUsername, dbPassword, dbUrl};
-		return dbCredentials;
 	}
 }

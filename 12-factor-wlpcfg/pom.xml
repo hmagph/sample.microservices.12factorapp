@@ -16,9 +16,9 @@
     <name>WAS Liberty Sample - Twelve Factor Sample Server Configuration</name>
     <url>https://wasdev.github.io</url>
     
-    <!-- <pluginRepositories>
-   		Configure Sonatype OSS Maven snapshots repository-->
-   		<!-- <pluginRepository>
+    <pluginRepositories>
+   		<!-- Configure Sonatype OSS Maven snapshots repository-->
+   		<pluginRepository>
    			<id>sonatype-nexus-snapshots</id>
    			<name>Sonatype Nexus Snapshots</name>
    			<url>https://oss.sonatype.org/content/repositories/snapshots/</url>
@@ -29,7 +29,7 @@
    				<enabled>false</enabled>
    			</releases>
    		</pluginRepository>
-   	</pluginRepositories>-->
+   	</pluginRepositories>
     
     <build>
     	<plugins>
@@ -81,10 +81,10 @@
             	</executions>
             </plugin>
             <!-- Enable liberty-maven-plugin -->
-            <!-- <plugin>
+            <plugin>
             	<groupId>net.wasdev.wlp.maven.plugins</groupId>
             	<artifactId>liberty-maven-plugin</artifactId>
-            	<version>1.0-SNAPSHOT</version>
+            	<version>1.1-SNAPSHOT</version>
             	<executions>
             		<execution>
             			<phase>package</phase>
@@ -94,17 +94,19 @@
             			<configuration>
             				<packageFile>../12-factor-wlpcfg</packageFile>
             				<include>usr</include>
+            				<serverName>12FactorAppServer</serverName>
             			</configuration>
             		</execution>
             	</executions>
 				<configuration>
 				    <install>
-            			<licenseCode><code></licenseCode>
+            			<licenseCode>'license'</licenseCode>
             			<version>8.5.5_06</version>
-            			<assemblyInstallDirectory>C:/LibertyInstallTestMvn</assemblyInstallDirectory>
             		</install>
+            		<assemblyInstallDirectory>C:/LibertyInstallTestMvn1</assemblyInstallDirectory>
+            		<userDirectory>../12-factor-wlpcfg</userDirectory>
 				</configuration>
-            </plugin>-->
+            </plugin>
     	</plugins>
     </build>
     
