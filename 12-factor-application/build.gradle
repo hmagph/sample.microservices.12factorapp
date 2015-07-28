@@ -1,7 +1,7 @@
 apply plugin: 'war'
 apply plugin: 'eclipse-wtp'
 apply plugin: 'maven-publish'
-apply plugin: 'liberty'
+//apply plugin: 'liberty'
 
 buildscript {
 	repositories {
@@ -43,7 +43,7 @@ task publishWar(dependsOn: 'jar', type: Copy) {
 	into('../12-factor-wlpcfg/servers/12FactorAppServer/apps')
 }
 
-liberty {
+/*liberty {
 	wlpDir = 'C:/LibertyInstallTest/wlp'
 	serverName = '12FactorAppServer'
 	userDir = '../12-factor-wlpcfg'
@@ -59,11 +59,14 @@ liberty {
 		archive = 'build/libs/12FactorApp.zip'
 	}
 	
-}
+}*/
 
+/*
 installLiberty.dependsOn('publishWar')
 libertyPackage.dependsOn('installLiberty')
 assemble.dependsOn('libertyPackage')
+*/
+assemble.dependsOn('publishWar')
 
 publishing {
 	publications {

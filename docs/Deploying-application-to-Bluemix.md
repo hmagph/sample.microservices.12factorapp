@@ -29,9 +29,9 @@ Bluemix will use the manifest.yml file we provided as long as it is in the same 
 
 To push applications to Bluemix from Eclipse you need the [IBM Eclipse Tools for Bluemix][eclipse-bluemix]. In Eclipse go to *help -> Eclipse Marketplace* and search for Bluemix. Once you have downloaded the tools you should be able to create a Bluemix server by right clicking in the servers tab, selecting *new > server*, selecting the server type *IBM Bluemix* and entering your Bluemix credentials. To push the application to Bluemix simply drag and drop the 12FactorApp.zip file into the Bluemix server. WDT will prompt you to enter a name for the application, environment variables and services to bind. Pick a name for the application and under environment variables specify the following:
 
-1. dbUsername: <Cloudant 'username' credential>
-2. dbPassword: <Cloudant 'password' credential>
-3. dbUrl: <Cloudant 'url' credential>
+1. dbUsername: 'Cloudant-username-credential'
+2. dbPassword: 'Cloudant-password-credential'
+3. dbUrl: 'Cloudant-url-credential'
 
 #### Running the sample application on Bluemix
 
