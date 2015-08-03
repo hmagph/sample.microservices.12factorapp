@@ -1,11 +1,10 @@
 apply plugin: 'war'
 apply plugin: 'eclipse-wtp'
 apply plugin: 'maven-publish'
-//apply plugin: 'liberty'
+apply plugin: 'liberty'
 
 buildscript {
 	repositories {
-		mavenLocal()
 		maven {
 			name = 'Sonatype Nexus Snapshots'
 			url = 'https://oss.sonatype.org/content/repositories/snapshots/'
@@ -15,7 +14,6 @@ buildscript {
 	dependencies {
 		classpath 'net.wasdev.wlp.gradle.plugins:liberty-gradle-plugin:1.0-SNAPSHOT'
 		classpath files('gradle/wlp-anttasks.jar')
-		//classpath files('C:/LibertyInstallTest2/wlp/bin/tools/ws-server.jar')
 	}
 }
 
@@ -43,7 +41,7 @@ task publishWar(dependsOn: 'jar', type: Copy) {
 	into('../12-factor-wlpcfg/servers/12FactorAppServer/apps')
 }
 
-/*liberty {
+liberty {
 	wlpDir = 'C:/LibertyInstallTest/wlp'
 	serverName = '12FactorAppServer'
 	userDir = '../12-factor-wlpcfg'
@@ -59,13 +57,12 @@ task publishWar(dependsOn: 'jar', type: Copy) {
 		archive = 'build/libs/12FactorApp.zip'
 	}
 	
-}*/
+}
 
-/*
 installLiberty.dependsOn('publishWar')
 libertyPackage.dependsOn('installLiberty')
 assemble.dependsOn('libertyPackage')
-*/
+
 assemble.dependsOn('publishWar')
 
 publishing {
