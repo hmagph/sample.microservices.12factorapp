@@ -7,6 +7,7 @@ import java.io.PrintWriter;
 
 import javax.json.Json;
 import javax.json.JsonArray;
+import javax.json.JsonException;
 import javax.json.JsonObject;
 import javax.json.JsonReader;
 import javax.json.JsonValue;
@@ -26,14 +27,20 @@ import javax.ws.rs.core.Response;
 public class AdminServlet extends HttpServlet {
 	
 	private static final long serialVersionUID = 1L;
+	private static String statsExtension = "/IBMJMXConnectorREST/mbeans/WebSphere%3Aname%3D12-factor-application.net.wasdev.twelvefactorapp.JaxrsApplication%2Ctype%3DServletStats/attributes?attribute=RequestCountDetails";
 
 	@Override
 	public void doGet(HttpServletRequest httpRequest, HttpServletResponse httpResponse) throws IOException {
 		String authorizationHeaderName = "Authorization";
 		String authorizationHeaderValue = "Basic " + javax.xml.bind.DatatypeConverter.printBase64Binary("kate:password".getBytes());
+		String url = null;
+		String requestURI = httpRequest.getRequestURI().toString();
+		String requestUrl = httpRequest.getRequestURL().toString();
+		String subUrl = requestUrl.substring(0, requestUrl.indexOf(requestURI));
+		url = subUrl + statsExtension;
 		
 		Client client = ClientBuilder.newClient();
-		WebTarget target = client.target("https://12-factor-app-cmd-line.eu-gb.mybluemix.net/IBMJMXConnectorREST/mbeans/WebSphere%3Aname%3D12-factor-application.net.wasdev.twelvefactorapp.JaxrsApplication%2Ctype%3DServletStats/attributes?attribute=RequestCountDetails");
+		WebTarget target = client.target(url);
 		Invocation.Builder invoBuild  = target.request(MediaType.APPLICATION_JSON).header(authorizationHeaderName, authorizationHeaderValue);
 		Response response = invoBuild.get();
 		String resp = response.readEntity(String.class);
@@ -43,17 +50,32 @@ public class AdminServlet extends HttpServlet {
 		out.println(stats);
 	}
 	
-	private String parse(String stats) {
+	private String parse(String stats) throws IOException {
 		// Convert string to jsonObject
 		InputStream is = new ByteArrayInputStream(stats.getBytes());
 		JsonReader reader = Json.createReader(is);
-		JsonArray jsonArray = reader.readArray();
-		JsonObject jsonObject = jsonArray.getJsonObject(0);
-		JsonObject topLevelValue = (JsonObject) jsonObject.get("value");
-		JsonObject value = (JsonObject) topLevelValue.get("value");
-		JsonValue currentValue = value.get("currentValue");
-		JsonValue desc = value.get("description");
-		return ("Stats:" + desc.toString() + ": " + currentValue.toString());
+		String output = "";
+		try {
+			JsonArray jsonArray = reader.readArray();
+			JsonObject jsonObject = jsonArray.getJsonObject(0);
+			JsonObject topLevelValue = (JsonObject) jsonObject.get("value");
+			JsonObject value = (JsonObject) topLevelValue.get("value");
+			JsonValue currentValue = value.get("currentValue");
+			JsonValue desc = value.get("description");
+			output = "Stats:" + desc.toString() + ": " + currentValue.toString();
+		} catch (JsonException e) {
+			reader.close();
+			is.close();
+			if (e.getMessage().equals("Cannot read JSON array, found JSON object")) {
+				output = "MXBean not created yet, the application must be accessed at least "
+						+ "once to get statistics";
+			} else {
+				output = "A JSON Exception occurred: " + e.getMessage();
+			}
+		}
+		reader.close();
+		is.close();
+		return output;
 	}
 
 }
