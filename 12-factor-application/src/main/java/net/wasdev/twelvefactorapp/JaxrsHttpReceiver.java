@@ -9,6 +9,7 @@ import javax.json.JsonObject;
 import javax.json.JsonReader;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.client.Entity;
@@ -81,5 +82,19 @@ public class JaxrsHttpReceiver {
 		} catch (Exception e) {
 			return e.getMessage();
 		}
+	}
+	
+	@PUT
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response putResponse(String databaseName) throws NullPointerException, IOException {
+		System.out.println("Creating database called " + databaseName);
+		String response;
+		try {
+		ResponseHandler responseHandler = new ResponseHandler("/" + databaseName);
+		response = responseHandler.invoke(RequestType.PUT);
+		} catch (Exception e) {
+			response = e.getMessage();
+		}
+		return Response.ok("Response is " + response).build();
 	}
 }
