@@ -10,6 +10,7 @@ import javax.json.JsonArray;
 import javax.json.JsonException;
 import javax.json.JsonObject;
 import javax.json.JsonReader;
+import javax.json.JsonReaderFactory;
 import javax.json.JsonValue;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -32,8 +33,8 @@ public class AdminServlet extends HttpServlet {
 	@Override
 	public void doGet(HttpServletRequest httpRequest, HttpServletResponse httpResponse) throws IOException {
 		String authorizationHeaderName = "Authorization";
-		String authorizationHeaderValue = "Basic " + javax.xml.bind.DatatypeConverter.printBase64Binary("kate:password".getBytes());
-		String url = null;
+		String authorizationHeaderValue = "Basic " + javax.xml.bind.DatatypeConverter.printBase64Binary("kate:password".getBytes("UTF-8"));
+		String url = "";
 		String requestURI = httpRequest.getRequestURI().toString();
 		String requestUrl = httpRequest.getRequestURL().toString();
 		String subUrl = requestUrl.substring(0, requestUrl.indexOf(requestURI));
@@ -45,14 +46,16 @@ public class AdminServlet extends HttpServlet {
 		Response response = invoBuild.get();
 		String resp = response.readEntity(String.class);
 		response.close();
-		String stats = parse(resp);
+//		String stats = parse(resp);
+		String stats = resp;
 		PrintWriter out = httpResponse.getWriter();
-		out.println(stats);
+		out.println("Stats: " + stats + " Status: " + httpResponse.getStatus());
 	}
 	
+	// Not quite working yet - getting a decoding error
 	private String parse(String stats) throws IOException {
 		// Convert string to jsonObject
-		InputStream is = new ByteArrayInputStream(stats.getBytes());
+		InputStream is = new ByteArrayInputStream(stats.getBytes("UTF-8"));
 		JsonReader reader = Json.createReader(is);
 		String output = "";
 		try {
