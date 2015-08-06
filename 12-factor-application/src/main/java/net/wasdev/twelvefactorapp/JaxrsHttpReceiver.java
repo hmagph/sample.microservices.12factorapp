@@ -12,136 +12,89 @@ import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
-import javax.ws.rs.client.Client;
-import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Entity;
-import javax.ws.rs.client.Invocation;
-import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import net.wasdev.twelvefactorapp.ResponseHandler.RequestType;
+
 @Path("/")
 public class JaxrsHttpReceiver {
-	String databaseName = "items";
+	String defaultDatabaseName = "items";
+	
+	public String getDefaultDatabaseName() {
+		return defaultDatabaseName;
+	}
 	
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getResponse() throws NullPointerException, IOException {
-		String dbFiles = getDatabaseFiles("/_all_dbs");
-		String items = getDatabaseFiles("/" + databaseName + "/_all_docs");
-		if (dbFiles != null && items != null) {
-			return Response.ok("All databases: " + dbFiles + "Items database: " + items).build();
-		} else {
-			return Response.ok("Database credentials not found").build();
+		try {
+		String dbFiles = getDatabases();
+		String items = getDatabaseFiles(defaultDatabaseName);
+		return Response.ok("All databases: " + dbFiles + " " + defaultDatabaseName + " database: " + items).build();
+		} catch (Exception e) {
+			return Response.ok("Response is " + e.getMessage()).build();
+		}
+	}
+	
+	public String getDatabases() throws Exception {
+		System.out.println("Getting all databases");
+		try {
+			ResponseHandler responseHandler = new ResponseHandler("/_all_dbs");
+			String response = responseHandler.invoke(RequestType.GET);
+			return response;
+		} catch (Exception e) {
+			throw e;
+		}
+	}
+	
+	public String getDatabaseFiles(String database) throws Exception {
+		System.out.println("Getting files for database" + database);
+		try {
+			ResponseHandler responseHandler = new ResponseHandler("/" + database + "/_all_docs");
+			String response = responseHandler.invoke(RequestType.GET);
+			return response;
+		} catch (Exception e) {
+			throw e;
+		}
+	}
+	
+	@POST
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response postResponse(String data) throws NullPointerException, IOException {
+		String contents = storeData(data);
+		return Response.ok("Response is " + contents).build();
+	}
+	
+	public String storeData(String data) throws NullPointerException, IOException {
+		System.out.println("Storing data " + data);
+		// Convert string to jsonObject
+		InputStream is = new ByteArrayInputStream(data.getBytes());
+		JsonReader reader = Json.createReader(is);
+		JsonObject jsonData = reader.readObject();
+		Entity<myObject> ent = Entity.entity(new myObject(jsonData), MediaType.APPLICATION_JSON);
+		// Get response
+		try {
+			ResponseHandler responseHandler = new ResponseHandler("/" + defaultDatabaseName + "/");
+			String response = responseHandler.invoke(RequestType.POST, ent);
+			return response;
+		} catch (Exception e) {
+			return e.getMessage();
 		}
 	}
 	
 	@PUT
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response putResponse(String databaseName) throws NullPointerException, IOException {
-		String contents = createDatabase(databaseName);
-		return Response.ok("Response is " + contents).build();
-	}
-	
-	@POST
-	@Produces(MediaType.APPLICATION_JSON)
-	public Response postResponse(String data) throws NullPointerException, IOException {
-		InputStream is = new ByteArrayInputStream(data.getBytes());
-		JsonReader reader = Json.createReader(is);
-		JsonObject jsonData = reader.readObject();
-		String contents = storeData(jsonData);
-		return Response.ok("Response is " + contents).build();
-	}
-	
-	public String getDatabaseFiles(String extension) throws NullPointerException, IOException {
-		System.out.println("Getting database files for extension" + extension);
-
-		String[] credentials = getCredentials();
-		String username = credentials[0];
-		String password = credentials[1];
-		String url = credentials[2];
-		String fullUrl = url + extension;
-		System.out.println("Found url " + fullUrl);
-		
-		String usernameAndPassword = username + ":" + password;
-				
-		String authorizationHeaderName = "Authorization";
-		String authorizationHeaderValue = "Basic " + javax.xml.bind.DatatypeConverter.printBase64Binary(usernameAndPassword.getBytes());
-		
-		Client client = ClientBuilder.newClient();
-		WebTarget target = client.target(fullUrl);
-		Invocation.Builder invoBuild  = target.request(MediaType.APPLICATION_JSON).header(authorizationHeaderName, authorizationHeaderValue);
-		Response httpResponse = invoBuild.get();
-		String contents = httpResponse.readEntity(String.class);
-		httpResponse.close();
-		return contents;
-	}
-	
-	public String createDatabase(String name) throws NullPointerException, IOException {
-		System.out.println("Creating database called " + name);
-
-		String[] credentials = getCredentials();
-		if (credentials != null) {
-			String username = credentials[0];
-			String password = credentials[1];
-			String url = credentials[2];
-			String fullUrl = url + "/" + name;
-			System.out.println("Found url " + fullUrl);		
-			String usernameAndPassword = username + ":" + password;
-					
-			String authorizationHeaderName = "Authorization";
-			String authorizationHeaderValue = "Basic " + javax.xml.bind.DatatypeConverter.printBase64Binary(usernameAndPassword.getBytes());		
-			
-			Client client = ClientBuilder.newClient();
-			WebTarget target = client.target(fullUrl);
-			Invocation.Builder invoBuild  = target.request(MediaType.APPLICATION_JSON).header(authorizationHeaderName, authorizationHeaderValue);
-			Response httpResponse = invoBuild.buildPut(null).invoke();
-			String contents = httpResponse.readEntity(String.class);
-			httpResponse.close();
-			return contents;
-		} else {
-			return null;
+		System.out.println("Creating database called " + databaseName);
+		String response;
+		try {
+		ResponseHandler responseHandler = new ResponseHandler("/" + databaseName);
+		response = responseHandler.invoke(RequestType.PUT);
+		} catch (Exception e) {
+			response = e.getMessage();
 		}
-	}
-	
-	public String storeData(JsonObject data) throws NullPointerException, IOException {
-		System.out.println("Storing data " + data);
-
-		String[] credentials = getCredentials();
-		String username = credentials[0];
-		String password = credentials[1];
-		String url = credentials[2];
-		String fullUrl = url + "/" + databaseName + "/";
-		System.out.println("Found url " + fullUrl);		
-		String usernameAndPassword = username + ":" + password;
-				
-		String authorizationHeaderName = "Authorization";
-		String authorizationHeaderValue = "Basic " + javax.xml.bind.DatatypeConverter.printBase64Binary(usernameAndPassword.getBytes());		
-			
-		Client client = ClientBuilder.newClient();
-		WebTarget target = client.target(fullUrl);
-		Invocation.Builder invoBuild  = target.request(MediaType.APPLICATION_JSON).header(authorizationHeaderName, authorizationHeaderValue);
-		Entity<myObject> ent = Entity.entity(new myObject(data), MediaType.APPLICATION_JSON);
-		Response httpResponse = invoBuild.buildPost(ent).invoke();
-		String contents = httpResponse.readEntity(String.class);
-		httpResponse.close();
-		return contents;
-	}
-	
-	// This method will either pull the database credentials from VCAP_SERVICES as provided by Bluemix or 
-	// it will search for the environment variables dbUsername, dbPassword and dbUrl to get the credentials
-	public String [] getCredentials() throws NullPointerException, IOException {
-		String dbUsername = null;
-		String dbPassword = null;
-		String dbUrl = null;
-		dbUsername = System.getenv("dbUsername");
-		dbPassword = System.getenv("dbPassword");
-		dbUrl = System.getenv("dbUrl");
-		if (dbUsername != null && dbPassword != null && dbUrl != null) {
-			String[] dbCredentials = {dbUsername, dbPassword, dbUrl};
-			return dbCredentials;
-		} else {
-			return null;
-		}
+		return Response.ok("Response is " + response).build();
 	}
 }

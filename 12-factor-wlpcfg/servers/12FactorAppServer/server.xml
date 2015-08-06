@@ -4,6 +4,8 @@
 		<feature>servlet-3.1</feature>
 		<feature>jaxrs-2.0</feature>
 		<feature>jsonp-1.0</feature>
+		<feature>monitor-1.0</feature>
+		<feature>restConnector-1.0</feature>
 	</featureManager>
 	
 	<httpEndpoint httpPort="9082" httpsPort="9445" id="defaultHttpEndpoint"/>
@@ -12,4 +14,6 @@
 
     <webApplication id="12-factor-application" location="12-factor-application.war" name="12-factor-application"/>
 
+    <quickStartSecurity userPassword="password" userName="kate"></quickStartSecurity>
+    <keyStore password="liberty"></keyStore>
 </server>
