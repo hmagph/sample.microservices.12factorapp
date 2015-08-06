@@ -1,6 +1,23 @@
 # Twelve-Factor Applications with Liberty
 
-This sample contains an example for a Twelve-Factor Application that can be run on Liberty and Bluemix. A Twelve-Factor App is an application that follows the methodology described here: [12factor.net](http://www.12factor.net) and is also a great methodology to use when following a microservices architecture.
+A Twelve-Factor application, as defined by [12factor.net](http://www.12factor.net), has characteristics that are ideal for developing individual microservices. To summarize briefly, a twelve-factor application:
+
+1. is stored in a single codebase, tracked in a version control system: one codebase, many deployments. 
+2. has explicitly declared and isolated external dependencies
+3. has deployment-specific configuration stored in environment variables, and not in the code
+4. treats backing services (e.g. data stores, message queues, etc.) as attached/replaceable resources
+5. is built in distinct stages (build, release, run), with strict separation between them (no knock-on effects or cycles)
+6. runs as one or more stateless processes that share nothing, and assume process memory is transient
+7. is completely self-contained, and provides a service endpoint on well-defined (environment determined) host and port
+8. is managed and scaled via process instances (horizontal scaling)
+9. is disposable, with minimal startup, graceful shutdown, and toleration for abrupt process termination 
+10. is designed for continuous development/deployment, with minimal difference between the app in development and the app in production
+11. treats logs as event streams: the outer/hosting environment deals with processing and routing log files.
+12. keeps one-off admin scripts with the application, to ensure the admin scripts run with the same environment as the application itself.
+
+
+This sample contains an example for a Twelve-Factor Application that can be run on WAS Liberty and Bluemix. 
+
 
 * Building this sample:
 	* [Building with Gradle](/docs/Building-the-sample.md#building-with-gradle)

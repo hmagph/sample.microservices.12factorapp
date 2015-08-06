@@ -36,7 +36,3 @@ To push applications to Bluemix from Eclipse you need the [IBM Eclipse Tools for
 #### Running the sample application on Bluemix
 
 Once the app has been deployed to Bluemix it should start automatically. You can start, stop and view that status of your app on the Bluemix dashboard. To check that your application is running successfully you just need to visit the route displayed at the top of the overview tab of your app. Send a HTTP GET request to <route>/12-factor-application/, you should see a list of the databases in your Cloudant instance and a list of the documents in the 'items' database.
-
-#### Note
-
-The Liberty on Bluemix currently still has the beta version of jaxrs-2.0 so the manifest.yml also includes the environent variable IBM_LIBERTY_BETA Value: true.
