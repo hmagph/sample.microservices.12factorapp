@@ -3,6 +3,8 @@ package net.wasdev.twelvefactorapp;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.json.Json;
 import javax.json.JsonObject;
@@ -51,6 +53,9 @@ public class JaxrsHttpReceiver {
 	
 	public String getDatabaseFiles(String database) throws Exception {
 		System.out.println("Getting files for database" + database);
+		// An example of how to use java.util.logging
+		Logger myLogger = Logger.getLogger("net.wasdev.12factorapp.JaxrsHttpReceiver.getDatabaseFiles");
+		myLogger.log(Level.INFO, "Extra logging as an example");
 		try {
 			ResponseHandler responseHandler = new ResponseHandler("/" + database + "/_all_docs");
 			String response = responseHandler.invoke(RequestType.GET);
