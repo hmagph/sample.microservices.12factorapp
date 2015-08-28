@@ -47,14 +47,14 @@ task publishWar(dependsOn: 'jar', type: Copy) {
 }
 
 liberty {
-	wlpDir = "${libertyRoot}/wlp"
+	wlpDir = project.hasProperty('libertyRoot') ? "${libertyRoot}/wlp" : 'C:/runtimes/Liberty/wlp'
 	serverName = '12FactorAppServer'
 	userDir = '../12-factor-wlpcfg'
 	
 	install {
-		licenseCode = "${libertyLicenseCode}"
+		licenseCode = project.hasProperty('libertyLicenseCode') ? "${libertyLicenseCode}" : 'licenseCode'
 		version = '8.5.5_06'
-		baseDir = "${libertyRoot}"
+		baseDir = project.hasProperty('libertyRoot') ? "${libertyRoot}" : 'C:/runtimes/Liberty'
 	}
 	
 	packageLiberty {
@@ -102,13 +102,15 @@ assemble.dependsOn('publishWar')
 installLiberty.dependsOn('publishWar')
 
 // If both license code and Liberty root are set then install liberty using liberty-gradle plugin
-if("${libertyLicenseCode}" != 'null' && "${libertyRoot}" != 'null') {
+//if("${libertyLicenseCode}" != 'null' && "${libertyRoot}" != 'null') {
+if(project.hasProperty('libertyLicenseCode')) {
 	println 'Using liberty-maven plugin to install Liberty'
 	println 'Packaging server but skipping functional tests because default install doesn\'t contain Java EE 7 features'
 	assemble.dependsOn('libertyPackage')
 	libertyPackage.dependsOn('installLiberty')
 // If only Liberty root is set then we are using a local version
-} else if ("${libertyLicenseCode}" == 'null' && "${libertyRoot}" != 'null') {
+//} else if ("${libertyLicenseCode}" == 'null' && "${libertyRoot}" != 'null') {
+} else if(!project.hasProperty('libertyLicenseCode') && file("${libertyRoot}/wlp/lib/ws-launch.jar").exists()) {
 	println 'Using local Liberty install to package server and run tests'
 	assemble.dependsOn('libertyPackage')
 	libertyPackage.dependsOn('publishWar')
