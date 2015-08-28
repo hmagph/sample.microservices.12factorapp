@@ -23,17 +23,20 @@ If the sample git repository hasn't been cloned yet, WDT has git tools integrate
 
 #### Import Gradle projects into WDT
 
-Once the git repository has been cloned you need to import the Gradle projects so they can be deployed to a server.
-
-First make sure that you have the Gradle IDE tools installed into Eclipse (help > Eclipse Marketplace > search for gradle) then follow the steps below:
+This assumes you have the Gradle [Buildship](https://projects.eclipse.org/projects/tools.buildship) tools installed into Eclipse Mars.
 
 1. In the Git Repository view, expand the 12factorapp repo to see the "Working Directory" folder
 2. Right-click on this folder, and select *Copy path to Clipboard*
 3. Select menu *File -> Import -> Gradle -> Gradle Project*
-4. In the Root folder textbox, Paste in the repository directory
-5. Click *Build Model* 
-6. Select all the projects (there should be three) and click *Finish*
+4. In the *Project root directory* folder textbox, Paste in the repository directory.
+5. Click *Next* twice
+6. Three projects should be listed in the *Gradle project structure* click *Finish*
 7. This will create 3 projects in Eclipse: sample.microservices.12factorapp, 12-factor-application, and 12-factor-wlpcfg
+8. Go to the *Gradle Tasks* view in Eclipse and navigate to the *sample.microservices.12factorapp* project
+9. Double click on the *eclipse* task to generate all the Eclipse files
+10. In the *Enterprise Explorer* view in Eclipse right click on the three projects mentioned in step 7 and click refresh
+
+:star: *Note:* If you did not use Eclipse/WDT to clone the git repository, follow from step 3, but navigate to the cloned repository directory rather than pasting its name in step 4.
 
 #### Import Maven projects into WDT
 
