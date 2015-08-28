@@ -9,10 +9,12 @@ import java.util.logging.Logger;
 import javax.json.Json;
 import javax.json.JsonObject;
 import javax.json.JsonReader;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.MediaType;
@@ -29,15 +31,29 @@ public class JaxrsHttpReceiver {
 	}
 	
 	@GET
-	@Produces(MediaType.APPLICATION_JSON)
+	@Produces("application/json")
 	public Response getResponse() throws NullPointerException, IOException {
 		try {
-		String dbFiles = getDatabases();
-		String items = getDatabaseFiles(defaultDatabaseName);
-		return Response.ok("All databases: " + dbFiles + " " + defaultDatabaseName + " database: " + items).build();
+			String dbFiles = getDatabases();
+			return Response.ok(dbFiles).build();
 		} catch (Exception e) {
-			return Response.ok("Response is " + e.getMessage()).build();
+			JsonObject exception = Json.createObjectBuilder().add("Exception", e.getMessage()).build();
+			return Response.status(503).entity(exception).build();
 		}
+	}
+	
+	@Path("/{name}")
+	@GET
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response getDatabaseResponse(@PathParam("name") String name) {
+		try {
+			String database = getDatabaseFiles(name);
+			return Response.ok(database).build();
+		} catch (Exception e) {
+			JsonObject exception = Json.createObjectBuilder().add("Exception", e.getMessage()).build();
+			return Response.status(503).entity(exception).build();
+		}
+		
 	}
 	
 	public String getDatabases() throws Exception {
@@ -68,11 +84,33 @@ public class JaxrsHttpReceiver {
 	@POST
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response postResponse(String data) throws NullPointerException, IOException {
-		String contents = storeData(data);
-		return Response.ok("Response is " + contents).build();
+		try {
+			String contents = storeData(data);
+			return Response.ok(contents).build();
+		} catch (Exception e) {
+			JsonObject exception = Json.createObjectBuilder().add("Exception", e.getMessage()).build();
+			return Response.status(503).entity(exception).build();
+		}
 	}
 	
-	public String storeData(String data) throws NullPointerException, IOException {
+	@Path("/{name}")
+	@POST
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response postDataResponse(String data, @PathParam("name") String name) {
+		try {
+			String contents = storeData(data, name);
+			return Response.ok(contents).build();
+		} catch (Exception e) {
+			JsonObject exception = Json.createObjectBuilder().add("Exception", e.getMessage()).build();
+			return Response.status(503).entity(exception).build();
+		}
+	}
+	
+	public String storeData(String data) throws NullPointerException, IOException, Exception {
+		return storeData(data, defaultDatabaseName);
+	}
+	
+	public String storeData(String data, String database) throws NullPointerException, IOException, Exception{
 		System.out.println("Storing data " + data);
 		// Convert string to jsonObject
 		InputStream is = new ByteArrayInputStream(data.getBytes());
@@ -81,11 +119,11 @@ public class JaxrsHttpReceiver {
 		Entity<myObject> ent = Entity.entity(new myObject(jsonData), MediaType.APPLICATION_JSON);
 		// Get response
 		try {
-			ResponseHandler responseHandler = new ResponseHandler("/" + defaultDatabaseName + "/");
+			ResponseHandler responseHandler = new ResponseHandler("/" + database + "/");
 			String response = responseHandler.invoke(RequestType.POST, ent);
 			return response;
 		} catch (Exception e) {
-			return e.getMessage();
+			throw e;
 		}
 	}
 	
@@ -97,9 +135,26 @@ public class JaxrsHttpReceiver {
 		try {
 		ResponseHandler responseHandler = new ResponseHandler("/" + databaseName);
 		response = responseHandler.invoke(RequestType.PUT);
+		return Response.ok("Created database " + response).build();
 		} catch (Exception e) {
-			response = e.getMessage();
+			return Response.ok("Response is " + e.getMessage()).build();
 		}
-		return Response.ok("Response is " + response).build();
 	}
+	
+	@Path("/{name}")
+	@DELETE
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response deleteResponse(@PathParam("name") String name) {
+		System.out.println("Deleting database called " + name);
+		String response;
+		try {
+		ResponseHandler responseHandler = new ResponseHandler("/" + name);
+		response = responseHandler.invoke(RequestType.DELETE);
+		return Response.ok("Deleted database " + response).build();
+		} catch (Exception e) {
+			return Response.ok("Response is " + e.getMessage()).build();
+		}
+		
+	}
+	
 }

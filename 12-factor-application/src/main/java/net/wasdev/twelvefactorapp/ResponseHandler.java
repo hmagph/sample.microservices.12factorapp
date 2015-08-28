@@ -13,7 +13,7 @@ public class ResponseHandler {
 	private Invocation.Builder invoBuild = null;
 	
 	public enum RequestType {
-		GET, POST, PUT
+		GET, POST, PUT, DELETE
 	}
 	
 	public ResponseHandler(String extension) throws Exception {

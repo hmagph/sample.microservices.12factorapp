@@ -24,7 +24,12 @@ dependencies {
 	providedCompile group:'javax.servlet', name:'javax.servlet-api', version:'3.1.0'
 	providedCompile group:'javax.ws.rs', name:'javax.ws.rs-api', version: '2.0.1'
 	providedCompile group:'javax.json', name:'javax.json-api', version:'1.0'
+	testCompile 'junit:junit:4.12'
+    testRuntime 'org.apache.cxf:cxf-rt-rs-client:3.1.1'
+    testRuntime 'org.glassfish:javax.json:1.0.4'
 }
+
+sourceCompatibility = 1.7
 
 // Set the Eclipse facets to use 3.0 of the Dynamic Web Module
 eclipse.wtp.facet {
@@ -42,14 +47,14 @@ task publishWar(dependsOn: 'jar', type: Copy) {
 }
 
 liberty {
-	wlpDir = 'C:/LibertyInstallTest/wlp'
+	wlpDir = "${libertyRoot}/wlp"
 	serverName = '12FactorAppServer'
 	userDir = '../12-factor-wlpcfg'
 	
 	install {
-		licenseCode = '<licenseCode>'
+		licenseCode = "${libertyLicenseCode}"
 		version = '8.5.5_06'
-		baseDir = 'C:/LibertyInstallTest'
+		baseDir = "${libertyRoot}"
 	}
 	
 	packageLiberty {
@@ -58,12 +63,6 @@ liberty {
 	}
 	
 }
-
-installLiberty.dependsOn('publishWar')
-libertyPackage.dependsOn('installLiberty')
-assemble.dependsOn('libertyPackage')
-
-assemble.dependsOn('publishWar')
 
 publishing {
 	publications {
@@ -76,3 +75,48 @@ publishing {
 		}
 	}
 }
+
+// Add a functional test task that runs during the 'check' phase that uses the Liberty Gradle plugin
+// to launch Liberty and run the test classes in the fvt source set
+task fvt(type: Test, dependsOn: jar) {
+    group 'Verification'
+    description 'Runs the functional verification tests.'
+    reports.html.destination = file("$buildDir/reports/fvt")
+    reports.junitXml.destination = file("$buildDir/test-results/fvt")
+    include '**/fvt/**'
+    exclude '**/unit/**'
+    systemProperties = ['liberty.test.port': '9082']
+    dependsOn publishWar, libertyStart
+    finalizedBy libertyStop
+}
+
+test {
+	reports.html.destination = file("$buildDir/reports/unit")
+	reports.junitXml.destination = file("$buildDir/test-results/unit")
+	include '**/unit/**'
+	exclude '**/fvt/**'
+}
+
+assemble.dependsOn('publishWar')
+
+installLiberty.dependsOn('publishWar')
+
+// If both license code and Liberty root are set then install liberty using liberty-gradle plugin
+if("${libertyLicenseCode}" != 'null' && "${libertyRoot}" != 'null') {
+	println 'Using liberty-maven plugin to install Liberty'
+	println 'Packaging server but skipping functional tests because default install doesn\'t contain Java EE 7 features'
+	assemble.dependsOn('libertyPackage')
+	libertyPackage.dependsOn('installLiberty')
+// If only Liberty root is set then we are using a local version
+} else if ("${libertyLicenseCode}" == 'null' && "${libertyRoot}" != 'null') {
+	println 'Using local Liberty install to package server and run tests'
+	assemble.dependsOn('libertyPackage')
+	libertyPackage.dependsOn('publishWar')
+	check.dependsOn('fvt')
+// If neither license code or Liberty root are set skip steps that require a server
+} else {
+	println 'No liberty install specified'
+	println 'Skipping packaging server and functional tests'
+}
+
+libertyStart.dependsOn testClasses
