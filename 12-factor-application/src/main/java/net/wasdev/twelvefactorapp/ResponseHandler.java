@@ -13,7 +13,7 @@ public class ResponseHandler {
 	private Invocation.Builder invoBuild = null;
 	
 	public enum RequestType {
-		GET, POST, PUT
+		GET, POST, PUT, DELETE
 	}
 	
 	public ResponseHandler(String extension) throws Exception {
@@ -52,7 +52,14 @@ public class ResponseHandler {
 		Response response = invoBuild.build(requestType.toString(), ent).invoke();
 		String resp = response.readEntity(String.class);
 		response.close();
+		checkResponse(resp);
 		return resp;
+	}
+	
+	public void checkResponse(String response) throws Exception {
+		if (response.contains("error")) {
+			throw new Exception("Database returned an error " + response);
+		}
 	}
 	
 }
