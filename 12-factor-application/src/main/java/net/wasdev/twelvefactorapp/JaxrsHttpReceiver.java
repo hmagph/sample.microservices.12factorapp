@@ -31,14 +31,14 @@ public class JaxrsHttpReceiver {
 	}
 	
 	@GET
-	@Produces("application/json")
+	@Produces(MediaType.APPLICATION_JSON)
 	public Response getResponse() throws NullPointerException, IOException {
 		try {
 			String dbFiles = getDatabases();
 			return Response.ok(dbFiles).build();
 		} catch (Exception e) {
 			JsonObject exception = Json.createObjectBuilder().add("Exception", e.getMessage()).build();
-			return Response.status(503).entity(exception).build();
+			return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(exception).build();
 		}
 	}
 	
@@ -51,20 +51,16 @@ public class JaxrsHttpReceiver {
 			return Response.ok(database).build();
 		} catch (Exception e) {
 			JsonObject exception = Json.createObjectBuilder().add("Exception", e.getMessage()).build();
-			return Response.status(503).entity(exception).build();
+			return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(exception).build();
 		}
 		
 	}
 	
 	public String getDatabases() throws Exception {
 		System.out.println("Getting all databases");
-		try {
-			ResponseHandler responseHandler = new ResponseHandler("/_all_dbs");
-			String response = responseHandler.invoke(RequestType.GET);
-			return response;
-		} catch (Exception e) {
-			throw e;
-		}
+		ResponseHandler responseHandler = new ResponseHandler("/_all_dbs");
+		String response = responseHandler.invoke(RequestType.GET);
+		return response;
 	}
 	
 	public String getDatabaseFiles(String database) throws Exception {
@@ -72,13 +68,9 @@ public class JaxrsHttpReceiver {
 		// An example of how to use java.util.logging
 		Logger myLogger = Logger.getLogger("net.wasdev.12factorapp.JaxrsHttpReceiver.getDatabaseFiles");
 		myLogger.log(Level.INFO, "Extra logging as an example");
-		try {
-			ResponseHandler responseHandler = new ResponseHandler("/" + database + "/_all_docs");
-			String response = responseHandler.invoke(RequestType.GET);
-			return response;
-		} catch (Exception e) {
-			throw e;
-		}
+		ResponseHandler responseHandler = new ResponseHandler("/" + database + "/_all_docs");
+		String response = responseHandler.invoke(RequestType.GET);
+		return response;
 	}
 	
 	@POST
@@ -89,7 +81,7 @@ public class JaxrsHttpReceiver {
 			return Response.ok(contents).build();
 		} catch (Exception e) {
 			JsonObject exception = Json.createObjectBuilder().add("Exception", e.getMessage()).build();
-			return Response.status(503).entity(exception).build();
+			return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(exception).build();
 		}
 	}
 	
@@ -102,7 +94,7 @@ public class JaxrsHttpReceiver {
 			return Response.ok(contents).build();
 		} catch (Exception e) {
 			JsonObject exception = Json.createObjectBuilder().add("Exception", e.getMessage()).build();
-			return Response.status(503).entity(exception).build();
+			return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(exception).build();
 		}
 	}
 	
@@ -110,7 +102,7 @@ public class JaxrsHttpReceiver {
 		return storeData(data, defaultDatabaseName);
 	}
 	
-	public String storeData(String data, String database) throws NullPointerException, IOException, Exception{
+	public String storeData(String data, String database) throws Exception {
 		System.out.println("Storing data " + data);
 		// Convert string to jsonObject
 		InputStream is = new ByteArrayInputStream(data.getBytes());
@@ -118,13 +110,9 @@ public class JaxrsHttpReceiver {
 		JsonObject jsonData = reader.readObject();
 		Entity<myObject> ent = Entity.entity(new myObject(jsonData), MediaType.APPLICATION_JSON);
 		// Get response
-		try {
-			ResponseHandler responseHandler = new ResponseHandler("/" + database + "/");
-			String response = responseHandler.invoke(RequestType.POST, ent);
-			return response;
-		} catch (Exception e) {
-			throw e;
-		}
+		ResponseHandler responseHandler = new ResponseHandler("/" + database + "/");
+		String response = responseHandler.invoke(RequestType.POST, ent);
+		return response;
 	}
 	
 	@PUT
@@ -137,7 +125,8 @@ public class JaxrsHttpReceiver {
 		response = responseHandler.invoke(RequestType.PUT);
 		return Response.ok("Created database " + response).build();
 		} catch (Exception e) {
-			return Response.ok("Response is " + e.getMessage()).build();
+			JsonObject exception = Json.createObjectBuilder().add("Exception", e.getMessage()).build();
+			return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(exception).build();
 		}
 	}
 	
@@ -148,11 +137,12 @@ public class JaxrsHttpReceiver {
 		System.out.println("Deleting database called " + name);
 		String response;
 		try {
-		ResponseHandler responseHandler = new ResponseHandler("/" + name);
-		response = responseHandler.invoke(RequestType.DELETE);
-		return Response.ok("Deleted database " + response).build();
+			ResponseHandler responseHandler = new ResponseHandler("/" + name);
+			response = responseHandler.invoke(RequestType.DELETE);
+			return Response.ok("Deleted database " + response).build();
 		} catch (Exception e) {
-			return Response.ok("Response is " + e.getMessage()).build();
+			JsonObject exception = Json.createObjectBuilder().add("Exception", e.getMessage()).build();
+			return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(exception).build();
 		}
 		
 	}

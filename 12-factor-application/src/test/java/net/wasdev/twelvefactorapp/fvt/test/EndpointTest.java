@@ -3,6 +3,7 @@ package net.wasdev.twelvefactorapp.fvt.test;
 import static org.junit.Assert.*;
 import net.wasdev.twelvefactorapp.ResponseHandler.RequestType;
 
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.Before;
 import org.junit.After;
@@ -25,19 +26,24 @@ import javax.ws.rs.core.Response;
 
 public class EndpointTest {
 
-	private String port;
+	private static String port;
+	private static String contextRoot;
 	
 	private String testDatabase = "testing";
-	
 	private boolean databaseConfigured = false;
+	
+	@BeforeClass
+	public static void beforeClass() {
+		port = System.getProperty("liberty.test.port");
+		contextRoot = "http://localhost:" + port + "/12-factor-application/";
+	}
 	
 	@Before
 	public void setup() {
 		// Database config must be stored in local environment variables
 		databaseConfigured = System.getenv("dbUsername") != null && System.getenv("dbPassword") != null
 				&& System.getenv("dbUrl") != null;
-		this.port = System.getProperty("liberty.test.port");
-        String url = "http://localhost:" + this.port + "/12-factor-application/";
+        String url = contextRoot;
         System.out.println("Creating database");
         Entity<String> ent = Entity.entity(testDatabase, MediaType.APPLICATION_JSON);
         Response response = sendRequest(url, RequestType.PUT, ent);
@@ -47,7 +53,7 @@ public class EndpointTest {
 	
 	@After
 	public void cleanUp() {
-        String url = "http://localhost:" + this.port + "/12-factor-application/" + testDatabase;
+        String url = contextRoot + testDatabase;
         System.out.println("Deleting database");
         Response response = sendRequest(url, RequestType.DELETE);
         response.close();
@@ -56,7 +62,7 @@ public class EndpointTest {
 	@Test
 	public void testGet() {
 		Assume.assumeTrue(databaseConfigured);
-        String url = "http://localhost:" + this.port + "/12-factor-application/";
+        String url = contextRoot;
         System.out.println("Testing " + url);
         Response response = sendRequest(url, RequestType.GET);
 		String responseString = response.readEntity(String.class);
@@ -65,13 +71,12 @@ public class EndpointTest {
         System.out.println("Returned " + responseString);
         assertTrue("Incorrect response code: " + responseCode + " Response string is " + responseString,
         		responseCode == 200);
-        assertFalse("Database returned error: " + responseString, responseString.contains("error"));
 	}
 	
 	@Test
 	public void testGetDatabase() {
 		Assume.assumeTrue(databaseConfigured);
-        String url = "http://localhost:" + this.port + "/12-factor-application/" + testDatabase;
+        String url = contextRoot + testDatabase;
         System.out.println("Testing " + url);
         Response response = sendRequest(url, RequestType.GET);
 		String responseString = response.readEntity(String.class);
@@ -80,13 +85,12 @@ public class EndpointTest {
         System.out.println("Returned " + responseString);
         assertTrue("Incorrect response code: " + responseCode + " Response string is " + responseString,
         		responseCode == 200);
-        assertFalse("Database returned error: " + responseString, responseString.contains("error"));
 	}
 	
 	@Test
 	public void testPost() {
 		Assume.assumeTrue(databaseConfigured);
-        String url = "http://localhost:" + this.port + "/12-factor-application/" + testDatabase;
+        String url = contextRoot + testDatabase;
         System.out.println("Testing " + url);
         JsonObject data = Json.createObjectBuilder().add("weather", "sunny").build();
         String dataString = data.toString();
@@ -98,14 +102,13 @@ public class EndpointTest {
         System.out.println("Returned " + responseString);
         assertTrue("Incorrect response code: " + responseCode + " Response string is " + responseString,
         		responseCode == 200);
-        assertFalse("Database returned error: " + responseString, responseString.contains("error"));
 	}
 	
 	// If the database configuration cannot be reached make sure the app fails gracefully
 	@Test
 	public void testDatabaseNotFound() {
 		Assume.assumeFalse(databaseConfigured);
-        String url = "http://localhost:" + this.port + "/12-factor-application/";
+        String url = contextRoot;
         System.out.println("Testing " + url);
         Response response = sendRequest(url, RequestType.GET);
 		String responseString = response.readEntity(String.class);
@@ -113,7 +116,7 @@ public class EndpointTest {
 		response.close();
         System.out.println("Returned " + responseString);
         assertTrue("Incorrect response code: " + responseCode + " Response string is " + responseString,
-        		responseCode == 503);
+        		responseCode == 500);
         assertTrue("Application returned error: " + responseString, responseString.contains("{\"Exception\":\"Database cannot be accessed at this time"));
 	}
 	
