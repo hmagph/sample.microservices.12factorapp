@@ -21,6 +21,8 @@ This sample can be built using [Gradle](http://gradle.org/). The build will pull
 $ gradle build publishToMavenLocal
 ```
 
+:pushpin: Note: To run the functional tests you must either [download WAS Liberty](/docs/Downloading-WAS-Liberty.md) and enter the location into the gradle.properties file, or to get a packaged server enter the Liberty license code into the gradle.properties file. The license code can be found at the bottom of the [current license](http://public.dhe.ibm.com/ibmdl/export/pub/software/websphere/wasdev/downloads/wlp/8.5.5.5/lafiles/runtime/en.html), look for the 'D/N: <license code>'.
+
 ## Building with maven
 
 This sample can be built using [Apache Maven](http://maven.apache.org/). The build will pull down a copy of Liberty, build the sample and produce a packaged liberty server that can be run locally or pushed up to Bluemix. 
