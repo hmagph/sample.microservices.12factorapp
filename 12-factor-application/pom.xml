@@ -29,7 +29,7 @@
     
     <properties>
         <!-- Default location of local liberty or target install directory if libertyLicense system property specified -->
-        <!-- To specify a new location pass in a new libertyBaseDir property as a system property e.g. mvn -DlibertyBaseDir= install -->
+        <!-- To specify a new location set a system property called libertyInstallBaseDir to point to this location e.g. mvn -DlibertyInstallBaseDir=<location> install -->
         <libertyBaseDir>C:/Liberty</libertyBaseDir>
         <!-- Update this to match the port number in the 12-factor-wlpcfg/servers/12FactorAppServer/server.xml
         This is needed to run the tests -->
@@ -325,6 +325,7 @@
             </activation>
             <properties>
                 <skipPackage>false</skipPackage>
+                <libertyBaseDir>C:/Liberty</libertyBaseDir>
             </properties>
         </profile>
         <profile>
@@ -336,28 +337,31 @@
             </activation>
             <properties>
                 <skipFVT>false</skipFVT>
+                <libertyBaseDir>C:/Liberty</libertyBaseDir>
             </properties>
         </profile>
         <profile>
             <id>check-liberty-present</id>
             <activation>
                 <file>
-                    <exists>${libertyBaseDir}/wlp/lib/ws-launch.jar</exists>
+                    <exists>${libertyInstallBaseDir}/wlp/lib/ws-launch.jar</exists>
                 </file>
             </activation>
             <properties>
                 <skipPackage>false</skipPackage>
+                <libertyBaseDir>${libertyInstallBaseDir}</libertyBaseDir>
             </properties>
         </profile>
         <profile>
             <id>check-for-java-ee7</id>
             <activation>
                 <file>
-                    <exists>${libertyBaseDir}/wlp/lib/features/javaee-7.0.mf</exists>
+                    <exists>${libertyInstallBaseDir}/wlp/lib/features/javaee-7.0.mf</exists>
                 </file>
             </activation>
             <properties>
                 <skipFVT>false</skipFVT>
+                <libertyBaseDir>${libertyInstallBaseDir}</libertyBaseDir>
             </properties>
         </profile>
     </profiles>
