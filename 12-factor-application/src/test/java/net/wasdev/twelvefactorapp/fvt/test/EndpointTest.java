@@ -106,7 +106,7 @@ public class EndpointTest {
 	
 	// If the database configuration cannot be reached make sure the app fails gracefully
 	@Test
-	public void testDatabaseNotFound() {
+	public void testDatabaseNotConfigured() {
 		Assume.assumeFalse(databaseConfigured);
         String url = contextRoot;
         System.out.println("Testing " + url);
