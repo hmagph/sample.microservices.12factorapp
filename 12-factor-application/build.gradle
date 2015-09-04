@@ -114,7 +114,7 @@ if(project.hasProperty('libertyLicenseCode')) {
 	libertyPackage.dependsOn('installLiberty')
 // If only Liberty root is set then we are using a local version
 } else if(!project.hasProperty('libertyLicenseCode') && file("${libertyRoot}/wlp/lib/ws-launch.jar").exists()) {
-	println 'Using local Liberty install located at ${libertyBaseDir} to package server and run tests'
+	println "Using local Liberty install located at ${libertyBaseDir} to package server and run tests"
 	assemble.dependsOn('libertyPackage')
 	libertyPackage.dependsOn('publishWar')
 	check.dependsOn('fvt')

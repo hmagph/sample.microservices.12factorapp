@@ -3,9 +3,9 @@
     <modelVersion>4.0.0</modelVersion>
     
     <parent>
-    	<groupId>net.wasdev.wlp.sample</groupId>
-    	<artifactId>12-factor</artifactId>
-    	<version>1.0-SNAPSHOT</version>
+        <groupId>net.wasdev.wlp.sample</groupId>
+        <artifactId>12-factor</artifactId>
+        <version>1.0-SNAPSHOT</version>
     </parent>
     
     <artifactId>12-factor-application</artifactId>
@@ -22,62 +22,108 @@
     </licenses>
     
     <scm>
-    	<connection>scm:git:git@github.com:WASdev/sample.microservices.12factorapp.git</connection>
+        <connection>scm:git:git@github.com:WASdev/sample.microservices.12factorapp.git</connection>
         <developerConnection>scm:git@github.com:WASdev/sample.microservices.12factorapp.git</developerConnection>
         <url>git@github.com:WASdev/sample.microservices.12factorapp.git</url>
     </scm>
     
+    <properties>
+        <!-- Default location of local liberty or target install directory if libertyLicense system property specified -->
+        <!-- To specify a new location set a system property called libertyInstallBaseDir to point to this location e.g. mvn -DlibertyInstallBaseDir=<location> install -->
+        <libertyBaseDir>C:/Liberty</libertyBaseDir>
+        <!-- Update this to match the port number in the 12-factor-wlpcfg/servers/12FactorAppServer/server.xml
+        This is needed to run the tests -->
+        <libertyTestPort>9082</libertyTestPort>
+        <skipFVT>true</skipFVT>
+        <skipPackage>true</skipPackage>
+    </properties>
+
     <dependencyManagement>
-    	<dependencies>
-    		<dependency>
-    			<groupId>javax.servlet</groupId>
-    			<artifactId>javax.servlet-api</artifactId>
-    			<version>3.1.0</version>
-    		</dependency>
-    		<dependency>
-    			<groupId>javax.ws.rs</groupId>
-    			<artifactId>javax.ws.rs-api</artifactId>
-    			<version>2.0.1</version>
-    		</dependency>
-    		<dependency>
-    			<groupId>javax.json</groupId>
-    			<artifactId>javax.json-api</artifactId>
-    			<version>1.0</version>
-    		</dependency>
-    		<dependency>
-    			<groupId>junit</groupId>
-    			<artifactId>junit</artifactId>
-    			<version>4.12</version>
-    		</dependency>
-    	</dependencies>
+        <dependencies>
+        <dependency>
+                <groupId>javax.servlet</groupId>
+                <artifactId>javax.servlet-api</artifactId>
+                <version>3.1.0</version>
+            </dependency>
+            <dependency>
+                <groupId>javax.ws.rs</groupId>
+                <artifactId>javax.ws.rs-api</artifactId>
+                <version>2.0.1</version>
+            </dependency>
+            <dependency>
+                <groupId>javax.json</groupId>
+                <artifactId>javax.json-api</artifactId>
+                <version>1.0</version>
+            </dependency>
+            <dependency>
+                <groupId>junit</groupId>
+                <artifactId>junit</artifactId>
+                <version>4.12</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.cxf</groupId>
+                <artifactId>cxf-rt-rs-client</artifactId>
+                <version>3.1.1</version>
+            </dependency>
+            <dependency>
+                <groupId>org.glassfish</groupId>
+                <artifactId>javax.json</artifactId>
+                <version>1.0.4</version>
+            </dependency>
+        </dependencies>
     </dependencyManagement>
     
     <dependencies>
-   		<dependency>
-   			<groupId>javax.servlet</groupId>
-   			<artifactId>javax.servlet-api</artifactId>
-   			<scope>provided</scope>
-   		</dependency>
-   		<dependency>
-   			<groupId>javax.ws.rs</groupId>
-   			<artifactId>javax.ws.rs-api</artifactId>
-   			<scope>provided</scope>
-   		</dependency>
-   		<dependency>
-   			<groupId>javax.json</groupId>
-   			<artifactId>javax.json-api</artifactId>
-   			<scope>provided</scope>
-   		</dependency>
-   		<dependency>
-   			<groupId>junit</groupId>
-   			<artifactId>junit</artifactId>
-   			<scope>test</scope>
-   		</dependency>
-   	</dependencies>
-   	
-   	<build>
-   		<plugins>
-   			<plugin>
+        <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>javax.servlet-api</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>javax.ws.rs</groupId>
+            <artifactId>javax.ws.rs-api</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>javax.json</groupId>
+            <artifactId>javax.json-api</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.cxf</groupId>
+            <artifactId>cxf-rt-rs-client</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.glassfish</groupId>
+            <artifactId>javax.json</artifactId>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+    
+    <pluginRepositories>
+        <!-- Configure Sonatype OSS Maven snapshots repository-->
+        <pluginRepository>
+        <id>sonatype-nexus-snapshots</id>
+            <name>Sonatype Nexus Snapshots</name>
+            <url>https://oss.sonatype.org/content/repositories/snapshots/</url>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+            <releases>
+                <enabled>false</enabled>
+            </releases>
+        </pluginRepository>
+    </pluginRepositories>
+
+    <build>
+        <plugins>
+            <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-war-plugin</artifactId>
                 <version>2.6</version>
@@ -85,6 +131,238 @@
                     <failOnMissingWebXml>false</failOnMissingWebXml>
                 </configuration>
             </plugin>
-   		</plugins>
-   	</build>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <version>2.6</version>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>copy</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${basedir}/../12-factor-wlpcfg/servers/12FactorAppServer/apps</outputDirectory>
+                            <silent>true</silent>
+                            <stripVersion>true</stripVersion>
+                            <artifactItems>
+                                <artifactItem>
+                                    <groupId>net.wasdev.wlp.sample</groupId>
+                                    <artifactId>12-factor-application</artifactId>
+                                    <version>1.0-SNAPSHOT</version>
+                                    <type>war</type>
+                                </artifactItem>
+                            </artifactItems>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <!-- Enable liberty-maven-plugin -->
+            <plugin>
+                <groupId>net.wasdev.wlp.maven.plugins</groupId>
+                <artifactId>liberty-maven-plugin</artifactId>
+                <version>1.1-SNAPSHOT</version>
+                <executions>
+                    <execution>
+                        <id>package-server</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>package-server</goal>
+                        </goals>
+                        <configuration>
+                            <packageFile>${basedir}/../12-factor-wlpcfg</packageFile>
+                            <include>usr</include>
+                            <skip>${skipPackage}</skip>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>start-server</id>
+                        <phase>pre-integration-test</phase>
+                        <goals>
+                            <goal>start-server</goal>
+                        </goals>
+                        <configuration>
+                            <skip>${skipFVT}</skip>
+                            <configFiles>${basedir}/../async-websocket-wlpcfg/servers/websocketSample/server.xml</configFiles>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>stop-server</id>
+                        <phase>post-integration-test</phase>
+                        <goals>
+                            <goal>stop-server</goal>
+                        </goals>
+                        <configuration>
+                            <skip>${skipFVT}</skip>
+                        </configuration>
+                    </execution>
+                </executions>
+                <configuration>
+                    <userDirectory>../12-factor-wlpcfg</userDirectory>
+                    <serverName>12FactorAppServer</serverName>
+                </configuration>
+            </plugin>
+            <!-- Plugin to run functional tests -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-failsafe-plugin</artifactId>
+                <version>2.18.1</version>
+                <executions>
+                    <execution>
+                        <phase>integration-test</phase>
+                        <id>integration-test</id>
+                        <goals>
+                            <goal>integration-test</goal>
+                        </goals>
+                        <configuration>
+                            <includes>
+                                <include>**/fvt/**</include>
+                            </includes>
+                            <excludes>
+                                <exclude>**/unit/**</exclude>
+                            </excludes>
+                            <systemPropertyVariables>
+                                <liberty.test.port>${libertyTestPort}</liberty.test.port>
+                            </systemPropertyVariables>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>verify-results</id>
+                        <goals>
+                            <goal>verify</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <skip>${skipFVT}</skip>
+                    <summaryFile>${project.build.directory}/test-reports/fvt/failsafe-summary.xml</summaryFile>
+                    <reportsDirectory>${project.build.directory}/test-reports/fvt</reportsDirectory>
+                </configuration>
+            </plugin>
+            <!-- Plugin to run unit tests -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>2.18.1</version>
+                <executions>
+                    <execution>
+                        <phase>test</phase>
+                        <id>default-test</id>
+                        <configuration>
+                            <includes>
+                                <include>**/unit/**</include>
+                            </includes>
+                            <excludes>
+                                <exclude>**/fvt/**</exclude>
+                            </excludes>
+                            <reportsDirectory>${project.build.directory}/test-reports/unit</reportsDirectory>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+    
+    <profiles>
+        <profile>
+            <id>install-liberty-from-plugin</id>
+            <activation>
+                 <property>
+                    <name>libertyLicense</name>
+                 </property>
+            </activation>
+            <build>
+                <plugins>
+                    <!-- Enable liberty-maven-plugin -->
+                    <plugin>
+                        <groupId>net.wasdev.wlp.maven.plugins</groupId>
+                        <artifactId>liberty-maven-plugin</artifactId>
+                        <version>1.1-SNAPSHOT</version>
+                        <configuration>
+                            <install>
+                                <licenseCode>${libertyLicense}</licenseCode>
+                                <version>8.5.5_06</version>
+                            </install>
+                            <assemblyInstallDirectory>${libertyBaseDir}</assemblyInstallDirectory>
+                        </configuration>
+                    </plugin>
+                 </plugins>
+             </build>
+             <properties>
+                <skipFVT>true</skipFVT>
+                <skipPackage>false</skipPackage>
+             </properties>
+        </profile>
+        <profile>
+            <!-- To install liberty set the current Liberty license code as the system
+                 property libertyLicense. See github docs for more details. -->
+            <id>not-installing-liberty</id>
+            <activation>
+                <property>
+                    <name>!libertyLicense</name>
+                </property>
+            </activation>
+            <build>
+                <plugins>
+                    <!-- Enable liberty-maven-plugin -->
+                    <plugin>
+                        <groupId>net.wasdev.wlp.maven.plugins</groupId>
+                        <artifactId>liberty-maven-plugin</artifactId>
+                        <version>1.1-SNAPSHOT</version>
+                        <configuration>
+                            <installDirectory>${libertyBaseDir}/wlp</installDirectory>
+                        </configuration>
+                    </plugin>
+                 </plugins>
+             </build>
+        </profile>
+        <profile>
+            <id>check-default-liberty-present</id>
+            <activation>
+                <file>
+                    <exists>C:/Liberty/wlp/lib/ws-launch.jar</exists>
+                </file>
+            </activation>
+            <properties>
+                <skipPackage>false</skipPackage>
+                <libertyBaseDir>C:/Liberty</libertyBaseDir>
+            </properties>
+        </profile>
+        <profile>
+            <id>check-for-default-java-ee7</id>
+            <activation>
+                <file>
+                    <exists>C:/Liberty/wlp/lib/features/javaee-7.0.mf</exists>
+                </file>
+            </activation>
+            <properties>
+                <skipFVT>false</skipFVT>
+                <libertyBaseDir>C:/Liberty</libertyBaseDir>
+            </properties>
+        </profile>
+        <profile>
+            <id>check-liberty-present</id>
+            <activation>
+                <file>
+                    <exists>${libertyInstallBaseDir}/wlp/lib/ws-launch.jar</exists>
+                </file>
+            </activation>
+            <properties>
+                <skipPackage>false</skipPackage>
+                <libertyBaseDir>${libertyInstallBaseDir}</libertyBaseDir>
+            </properties>
+        </profile>
+        <profile>
+            <id>check-for-java-ee7</id>
+            <activation>
+                <file>
+                    <exists>${libertyInstallBaseDir}/wlp/lib/features/javaee-7.0.mf</exists>
+                </file>
+            </activation>
+            <properties>
+                <skipFVT>false</skipFVT>
+                <libertyBaseDir>${libertyInstallBaseDir}</libertyBaseDir>
+            </properties>
+        </profile>
+    </profiles>
 </project>
