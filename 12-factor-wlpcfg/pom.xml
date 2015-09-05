@@ -1,4 +1,3 @@
-
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
@@ -16,8 +15,112 @@
     <name>WAS Liberty Sample - Twelve Factor Sample Server Configuration</name>
     <url>https://wasdev.github.io</url>
     
+    <properties>
+	<installFile>${basedir}/../wlp-install.properties</installFile>
+    </properties>
+
+    <!-- This pom is built first (before application) as the application will use what is downloaded here to test/build against.
+         Enable one of the profiles below to download Liberty (or select an existing one) -->
     <build>
     	<plugins>
+            <plugin>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <version>1.8</version>
+                <executions>
+
+                    <execution>
+                        <id>read-properties</id>
+                        <phase>process-resources</phase>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                        <configuration>
+                            <exportAntProperties>true</exportAntProperties>
+                            <target unless="selectNewInstall">
+                                <!-- only run when a profile is not specified -->
+                                <!-- Read the properties file that should already exist (no failure if not) -->
+                                <property file="${installFile}" />
+                                
+                                <!-- sane default should we have nothing -->
+                                <property name="wlp.install.dir" value="${project.build.directory}/liberty"/>
+
+                                <!-- set a property to indicate that we read properties -->
+                                <property name="read.wlp-install.properties" value="true" />
+                            </target>
+                        </configuration>
+                    </execution>
+
+                    <execution>
+                        <id>find-wlp</id>
+                        <phase>process-resources</phase>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                        <configuration>
+                            <exportAntProperties>true</exportAntProperties>
+                            <target>
+                                <!-- Check the wlp.install.dir, and ensure it contains a liberty install -->
+                                <condition property="valid.wlp">
+                                    <and>
+                                        <available file="${wlp.install.dir}" type="dir" />
+                                        <available file="${wlp.install.dir}/lib/ws-launch.jar" type="file" />
+                                    </and>
+                                </condition>
+                                
+                                <!-- Some tests need to be disabled if we don't have a valid liberty around -->
+                                <condition property="dirs.missing" value="false" else="true">
+                                    <isset property="valid.wlp" />
+                                </condition>
+
+                                <!-- Create (or recreate) the version file -->
+                                <echo file="${installFile}"># Generated file, rebuilt with every build
+wlp.bad.install=${dirs.missing}
+wlp.install.dir=${wlp.install.dir}
+</echo>
+
+                            </target>
+                        </configuration>
+                    </execution>
+
+                    <execution>
+                        <id>messages</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                        <configuration>
+                            <target unless="valid.wlp">
+<echo> ---
+NOTE: Integration tests will be disabled until a valid wlp installation is located.
+
+This can be corrected in a few ways: 
+
+* mvn install -Pmvn-download 
+    This will download a development version of WAS Liberty.
+    Optionally: -Dwlp.version=version, e.g. 8.5.+
+                -Dwlp.install.dir=/path/to/wlp
+
+* mvn install -Pwlp-download -Dwlp.license=license_string
+    This will download a licensed version of WAS Liberty.
+    Optionally: -Dwlp.version=version, 8.5.+
+                -Dwlp.install.dir=/path/to/wlp
+
+* mvn install -Pwlp-install -Dwlp.install.dir=/path/to/wlp
+    This will use the specified local installation of WAS Liberty.
+
+
+wlp.install.dir is either unset, not a directory, or not a valid Liberty installation.
+The current value is ${wlp.install.dir}
+${read.wlp-install.properties}
+</echo>
+<fail unless="read.wlp-install.properties" message="Incorrect selection of WAS Liberty installation." />
+                            </target>
+                        </configuration>
+                    </execution>
+
+                </executions>
+            </plugin>
+
             <plugin>
                 <artifactId>maven-clean-plugin</artifactId>
                 <version>2.6.1</version>
@@ -42,4 +145,99 @@
     	</plugins>
     </build>
     
+    <profiles>
+
+        <!-- Profile to download liberty from maven repository. 
+             Activate this profile (-Pmvn-download) and provide 
+             the following properties: 
+             	-Dwlp.version=<value>  (optional)
+                -Dwlp.install.dir=<value> (optional) -->
+        <profile>
+            <id>mvn-download</id>
+            <properties>
+                <!-- Default location to download liberty -->
+                <wlp.install.dir>${project.build.directory}/liberty</wlp.install.dir>
+                <!-- Default version -->
+                 <wlp.version>8.5.+</wlp.version>
+		<!-- After choosing this profile, regenerate the versions file -->
+                 <selectNewInstall>false</selectNewInstall>
+            </properties>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-dependency-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>mvn-download</id>
+                                <phase>generate-resources</phase>
+                                <goals>
+                                    <goal>unpack</goal>
+                                </goals>
+                                <configuration>
+                                    <artifactItems>
+                                        <artifactItem>
+                                            <groupId>com.ibm.websphere.appserver.runtime</groupId>
+                                            <artifactId>wlp-webProfile7</artifactId>
+                                            <version>${wlp.version}</version>
+                                            <type>zip</type>
+                                            <overWrite>true</overWrite>
+                                            <outputDirectory>${wlp.install.dir}</outputDirectory>
+                                        </artifactItem>
+                                    </artifactItems>
+                                </configuration>
+                            </execution>
+			</executions>
+                    </plugin>
+                </plugins>
+            </build>
+	</profile>
+
+        <!-- Profile to download licensed liberty from the Liberty repository. 
+             Activate this profile (-Pwlp-download) and provide the following properties: 
+                -Dwlp.license=<value>
+             	-Dwlp.version=<value> (optional)
+                -Dwlp.install.dir=<value> (optional) 
+             Versions are specified here: http://public.dhe.ibm.com/ibmdl/export/pub/software/websphere/wasdev/downloads/wlp/index.yml -->
+        <profile>
+            <id>wlp-download</id>
+            <properties>
+                <!-- Default location to download liberty -->
+                <wlp.install.dir>${project.build.directory}/liberty</wlp.install.dir>
+                <!-- Default version -->
+                <wlp.version>8.5.+</wlp.version>
+		<!-- After choosing this profile, regenerate the versions file -->
+                <selectNewInstall>true</selectNewInstall>
+            </properties>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>net.wasdev.wlp.maven.plugins</groupId>
+                        <artifactId>liberty-maven-plugin</artifactId>
+                        <version>1.1-SNAPSHOT</version>                        
+                        <configuration>
+                            <install>
+                            	<licenseCode>${wlp.license}</licenseCode>
+                                <version>${wlp.version}</version>
+				<assemblyInstallDirectory>${wlp.install.dir}</assemblyInstallDirectory>
+                            </install>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+	</profile>
+
+        <!-- Profile to use an existing liberty installation. 
+             Activate this profile (-Pwlp-install) and provide the following property: 
+                -Dwlp.install.dir=<value> 
+             Versions are specified here: http://public.dhe.ibm.com/ibmdl/export/pub/software/websphere/wasdev/downloads/wlp/index.yml -->
+        <profile>
+            <id>wlp-install</id>
+            <properties>
+		<!-- After choosing this profile, regenerate the versions file -->
+                <selectNewInstall>true</selectNewInstall>
+            </properties>
+	</profile>
+
+    </profiles>
 </project>

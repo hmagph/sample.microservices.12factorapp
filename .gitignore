@@ -5,3 +5,5 @@
 /.settings
 /.plxarc
 /target
+*.swp
+wlp-install.properties

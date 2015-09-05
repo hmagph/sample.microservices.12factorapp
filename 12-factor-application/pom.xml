@@ -26,21 +26,24 @@
         <developerConnection>scm:git@github.com:WASdev/sample.microservices.12factorapp.git</developerConnection>
         <url>git@github.com:WASdev/sample.microservices.12factorapp.git</url>
     </scm>
-    
-    <properties>
-        <!-- Default location of local liberty or target install directory if libertyLicense system property specified -->
-        <!-- To specify a new location set a system property called libertyInstallBaseDir to point to this location e.g. mvn -DlibertyInstallBaseDir=<location> install -->
-        <libertyBaseDir>C:/Liberty</libertyBaseDir>
-        <!-- Update this to match the port number in the 12-factor-wlpcfg/servers/12FactorAppServer/server.xml
-        This is needed to run the tests -->
-        <libertyTestPort>9082</libertyTestPort>
-        <skipFVT>true</skipFVT>
-        <skipPackage>true</skipPackage>
-    </properties>
 
+    <properties>
+	<installFile>${basedir}/../wlp-install.properties</installFile>
+        <testFile>${basedir}/../devtest.properties</testFile>
+        <serverName>12FactorAppServer</serverName>
+        <userDir>${basedir}/../12-factor-wlpcfg</userDir>
+        <serverDir>${userDir}/servers/${serverName}</serverDir>
+
+        <skipPackage>true</skipPackage>
+
+        <!-- allow tests to be skipped if a wlp dir can't be found without failing the build,
+             use the requireAllTests profile to override -->
+        <skipEnforceTests>true</skipEnforceTests>
+    </properties>
+    
     <dependencyManagement>
         <dependencies>
-        <dependency>
+            <dependency>
                 <groupId>javax.servlet</groupId>
                 <artifactId>javax.servlet-api</artifactId>
                 <version>3.1.0</version>
@@ -104,23 +107,14 @@
             <artifactId>javax.json</artifactId>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>net.wasdev.wlp.sample</groupId>
+            <artifactId>12-factor-wlpcfg</artifactId>
+            <version>${project.version}</version>
+            <type>pom</type>
+        </dependency>
     </dependencies>
     
-    <pluginRepositories>
-        <!-- Configure Sonatype OSS Maven snapshots repository-->
-        <pluginRepository>
-        <id>sonatype-nexus-snapshots</id>
-            <name>Sonatype Nexus Snapshots</name>
-            <url>https://oss.sonatype.org/content/repositories/snapshots/</url>
-            <snapshots>
-                <enabled>true</enabled>
-            </snapshots>
-            <releases>
-                <enabled>false</enabled>
-            </releases>
-        </pluginRepository>
-    </pluginRepositories>
-
     <build>
         <plugins>
             <plugin>
@@ -131,6 +125,27 @@
                     <failOnMissingWebXml>false</failOnMissingWebXml>
                 </configuration>
             </plugin>
+            <!-- Read file(s) containing development and test properties -->
+            <plugin>
+        	<groupId>org.codehaus.mojo</groupId>
+        	<artifactId>properties-maven-plugin</artifactId>
+        	<version>1.0-alpha-2</version>
+        	<executions>
+          	    <execution>
+            		<phase>initialize</phase>
+            		<goals>
+              		    <goal>read-project-properties</goal>
+            		</goals>
+            		<configuration>
+             		    <files>
+                		<file>${installFile}</file>
+                		<file>${testFile}</file>
+             	 	    </files>
+           		</configuration>
+          	    </execution>
+        	</executions>
+	    </plugin>
+            <!-- Copy war to wlpcfg for both later packaging and test -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-dependency-plugin</artifactId>
@@ -142,7 +157,7 @@
                             <goal>copy</goal>
                         </goals>
                         <configuration>
-                            <outputDirectory>${basedir}/../12-factor-wlpcfg/servers/12FactorAppServer/apps</outputDirectory>
+                            <outputDirectory>${serverDir}/apps</outputDirectory>
                             <silent>true</silent>
                             <stripVersion>true</stripVersion>
                             <artifactItems>
@@ -157,11 +172,17 @@
                     </execution>
                 </executions>
             </plugin>
-            <!-- Enable liberty-maven-plugin -->
+            <!-- Enable liberty-maven plugin -->
             <plugin>
                 <groupId>net.wasdev.wlp.maven.plugins</groupId>
                 <artifactId>liberty-maven-plugin</artifactId>
                 <version>1.1-SNAPSHOT</version>
+                <configuration>
+                    <serverName>${serverName}</serverName>
+                    <installDirectory>${wlp.install.dir}</installDirectory>
+                    <userDirectory>${userDir}</userDirectory>
+                    <outputDirectory>${project.build.directory}/wlp.output</outputDirectory>
+                </configuration>
                 <executions>
                     <execution>
                         <id>package-server</id>
@@ -170,9 +191,9 @@
                             <goal>package-server</goal>
                         </goals>
                         <configuration>
-                            <packageFile>${basedir}/../12-factor-wlpcfg</packageFile>
+                            <skip>${wlp.bad.install}</skip>
+                            <packageFile>${project.build.directory}/${serverName}.zip</packageFile>
                             <include>usr</include>
-                            <skip>${skipPackage}</skip>
                         </configuration>
                     </execution>
                     <execution>
@@ -182,8 +203,7 @@
                             <goal>start-server</goal>
                         </goals>
                         <configuration>
-                            <skip>${skipFVT}</skip>
-                            <configFiles>${basedir}/../async-websocket-wlpcfg/servers/websocketSample/server.xml</configFiles>
+                            <skip>${wlp.bad.install}</skip>
                         </configuration>
                     </execution>
                     <execution>
@@ -193,14 +213,10 @@
                             <goal>stop-server</goal>
                         </goals>
                         <configuration>
-                            <skip>${skipFVT}</skip>
+                            <skip>${wlp.bad.install}</skip>
                         </configuration>
                     </execution>
                 </executions>
-                <configuration>
-                    <userDirectory>../12-factor-wlpcfg</userDirectory>
-                    <serverName>12FactorAppServer</serverName>
-                </configuration>
             </plugin>
             <!-- Plugin to run functional tests -->
             <plugin>
@@ -222,7 +238,7 @@
                                 <exclude>**/unit/**</exclude>
                             </excludes>
                             <systemPropertyVariables>
-                                <liberty.test.port>${libertyTestPort}</liberty.test.port>
+                                <liberty.test.port>${libertyPort}</liberty.test.port>
                             </systemPropertyVariables>
                         </configuration>
                     </execution>
@@ -234,7 +250,7 @@
                     </execution>
                 </executions>
                 <configuration>
-                    <skip>${skipFVT}</skip>
+                    <skip>${wlp.bad.install}</skip>
                     <summaryFile>${project.build.directory}/test-reports/fvt/failsafe-summary.xml</summaryFile>
                     <reportsDirectory>${project.build.directory}/test-reports/fvt</reportsDirectory>
                 </configuration>
@@ -260,109 +276,41 @@
                     </execution>
                 </executions>
             </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-enforcer-plugin</artifactId>
+                <version>1.4.1</version>
+                <executions>
+                    <execution>
+                        <id>enforce-versions</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>enforce</goal>
+                        </goals>
+                        <configuration>
+                            <skip>${skipEnforceTests}</skip>
+                            <rules>
+                                <requireProperty>
+                                    <property>wlp.bad.install</property>
+                                    <message>Must run all tests. Tests may be skipped because of bad WAS Liberty install at ${wlp.install.dir}</message>
+                                    <regex>false</regex>
+                                    <regexMessage>wlp.bad.install=${wlp.bad.install} -- it should be false</regexMessage>
+                                </requireProperty>
+                            </rules>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
     </build>
-    
+
     <profiles>
         <profile>
-            <id>install-liberty-from-plugin</id>
-            <activation>
-                 <property>
-                    <name>libertyLicense</name>
-                 </property>
-            </activation>
-            <build>
-                <plugins>
-                    <!-- Enable liberty-maven-plugin -->
-                    <plugin>
-                        <groupId>net.wasdev.wlp.maven.plugins</groupId>
-                        <artifactId>liberty-maven-plugin</artifactId>
-                        <version>1.1-SNAPSHOT</version>
-                        <configuration>
-                            <install>
-                                <licenseCode>${libertyLicense}</licenseCode>
-                                <version>8.5.5_06</version>
-                            </install>
-                            <assemblyInstallDirectory>${libertyBaseDir}</assemblyInstallDirectory>
-                        </configuration>
-                    </plugin>
-                 </plugins>
-             </build>
-             <properties>
-                <skipFVT>true</skipFVT>
-                <skipPackage>false</skipPackage>
-             </properties>
-        </profile>
-        <profile>
-            <!-- To install liberty set the current Liberty license code as the system
-                 property libertyLicense. See github docs for more details. -->
-            <id>not-installing-liberty</id>
-            <activation>
-                <property>
-                    <name>!libertyLicense</name>
-                </property>
-            </activation>
-            <build>
-                <plugins>
-                    <!-- Enable liberty-maven-plugin -->
-                    <plugin>
-                        <groupId>net.wasdev.wlp.maven.plugins</groupId>
-                        <artifactId>liberty-maven-plugin</artifactId>
-                        <version>1.1-SNAPSHOT</version>
-                        <configuration>
-                            <installDirectory>${libertyBaseDir}/wlp</installDirectory>
-                        </configuration>
-                    </plugin>
-                 </plugins>
-             </build>
-        </profile>
-        <profile>
-            <id>check-default-liberty-present</id>
-            <activation>
-                <file>
-                    <exists>C:/Liberty/wlp/lib/ws-launch.jar</exists>
-                </file>
-            </activation>
+            <id>requireAllTests</id>
             <properties>
-                <skipPackage>false</skipPackage>
-                <libertyBaseDir>C:/Liberty</libertyBaseDir>
+                <skipEnforceTests>false</skipEnforceTests>
             </properties>
         </profile>
-        <profile>
-            <id>check-for-default-java-ee7</id>
-            <activation>
-                <file>
-                    <exists>C:/Liberty/wlp/lib/features/javaee-7.0.mf</exists>
-                </file>
-            </activation>
-            <properties>
-                <skipFVT>false</skipFVT>
-                <libertyBaseDir>C:/Liberty</libertyBaseDir>
-            </properties>
-        </profile>
-        <profile>
-            <id>check-liberty-present</id>
-            <activation>
-                <file>
-                    <exists>${libertyInstallBaseDir}/wlp/lib/ws-launch.jar</exists>
-                </file>
-            </activation>
-            <properties>
-                <skipPackage>false</skipPackage>
-                <libertyBaseDir>${libertyInstallBaseDir}</libertyBaseDir>
-            </properties>
-        </profile>
-        <profile>
-            <id>check-for-java-ee7</id>
-            <activation>
-                <file>
-                    <exists>${libertyInstallBaseDir}/wlp/lib/features/javaee-7.0.mf</exists>
-                </file>
-            </activation>
-            <properties>
-                <skipFVT>false</skipFVT>
-                <libertyBaseDir>${libertyInstallBaseDir}</libertyBaseDir>
-            </properties>
-        </profile>
-    </profiles>
+    </profiles> 
+
 </project>
