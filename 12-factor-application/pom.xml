@@ -28,11 +28,13 @@
     </scm>
 
     <properties>
-	<installFile>${basedir}/../wlp-install.properties</installFile>
-        <testFile>${basedir}/../devtest.properties</testFile>
-        <serverName>12FactorAppServer</serverName>
-        <userDir>${basedir}/../12-factor-wlpcfg</userDir>
-        <serverDir>${userDir}/servers/${serverName}</serverDir>
+        <wlpInstallProps>${project.parent.basedir}/wlp-install.properties</wlpInstallProps>
+        <devtestProps>${project.parent.basedir}/devtest.properties</devtestProps>
+ 
+        <wlpServerName>12FactorAppServer</wlpServerName>
+        <wlpUserDir>${project.parent.basedir}/12-factor-wlpcfg</wlpUserDir>
+        <wlpServerDir>${wlpUserDir}/servers/${wlpServerName}</wlpServerDir>
+        <wlpOutputDir>${project.build.directory}/wlp.output</wlpOutputDir>
 
         <skipPackage>true</skipPackage>
 
@@ -137,10 +139,10 @@
               		    <goal>read-project-properties</goal>
             		</goals>
             		<configuration>
-             		    <files>
-                		<file>${installFile}</file>
-                		<file>${testFile}</file>
-             	 	    </files>
+                            <files>
+                                <file>${wlpInstallProps}</file>
+                                <file>${devtestProps}</file>
+                            </files>
            		</configuration>
           	    </execution>
         	</executions>
@@ -157,7 +159,7 @@
                             <goal>copy</goal>
                         </goals>
                         <configuration>
-                            <outputDirectory>${serverDir}/apps</outputDirectory>
+                            <outputDirectory>${wlpServerDir}/apps</outputDirectory>
                             <silent>true</silent>
                             <stripVersion>true</stripVersion>
                             <artifactItems>
@@ -176,12 +178,11 @@
             <plugin>
                 <groupId>net.wasdev.wlp.maven.plugins</groupId>
                 <artifactId>liberty-maven-plugin</artifactId>
-                <version>1.1-SNAPSHOT</version>
                 <configuration>
-                    <serverName>${serverName}</serverName>
+                    <serverName>${wlpServerName}</serverName>
                     <installDirectory>${wlp.install.dir}</installDirectory>
-                    <userDirectory>${userDir}</userDirectory>
-                    <outputDirectory>${project.build.directory}/wlp.output</outputDirectory>
+                    <userDirectory>${wlpUserDir}</userDirectory>
+                    <outputDirectory>${wlpOutputDir}</outputDirectory>
                 </configuration>
                 <executions>
                     <execution>
@@ -192,7 +193,7 @@
                         </goals>
                         <configuration>
                             <skip>${wlp.bad.install}</skip>
-                            <packageFile>${project.build.directory}/${serverName}.zip</packageFile>
+                            <packageFile>${project.build.directory}/${wlpServerName}.zip</packageFile>
                             <include>usr</include>
                         </configuration>
                     </execution>
@@ -279,7 +280,6 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-enforcer-plugin</artifactId>
-                <version>1.4.1</version>
                 <executions>
                     <execution>
                         <id>enforce-versions</id>
