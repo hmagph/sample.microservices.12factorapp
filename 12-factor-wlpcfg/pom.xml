@@ -191,54 +191,6 @@ runtime and feature downloads in automated builds.
     
     <profiles>
 
-        <!-- Profile to download liberty from maven repository. 
-             Activate this profile (-Pmvn-download) and provide 
-             the following properties: 
-             	-Dwlp.version=<value>  (optional)
-                -Dwlp.install.dir=<value> (optional) -->
-        <profile>
-            <id>mvn-download</id>
-            <properties>
-                <!-- Default location to download liberty -->
-                <wlp.install.dir>${project.build.directory}/liberty</wlp.install.dir>
-                <!-- Default version -->
-                <wlp.version>8.5.+</wlp.version>
-
-		<!-- Yes, we are selecting a new profile (don't read the old file) -->
-                <selectNewInstall>true</selectNewInstall>
-                <existingInstall>false</existingInstall>
-            </properties>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-dependency-plugin</artifactId>
-                        <executions>
-                            <execution>
-                                <id>mvn-download</id>
-                                <phase>generate-resources</phase>
-                                <goals>
-                                    <goal>unpack</goal>
-                                </goals>
-                                <configuration>
-                                    <artifactItems>
-                                        <artifactItem>
-                                            <groupId>com.ibm.websphere.appserver.runtime</groupId>
-                                            <artifactId>wlp-webProfile7</artifactId>
-                                            <version>${wlp.version}</version>
-                                            <type>zip</type>
-                                            <overWrite>true</overWrite>
-                                            <outputDirectory>${wlp.install.dir}</outputDirectory>
-                                        </artifactItem>
-                                    </artifactItems>
-                                </configuration>
-                            </execution>
-			</executions>
-                    </plugin>
-                </plugins>
-            </build>
-	</profile>
-
         <!-- Profile to download licensed liberty from the Liberty repository. 
              Activate this profile (-Pwlp-download) and provide the following properties: 
                 -Dwlp.license=<value>

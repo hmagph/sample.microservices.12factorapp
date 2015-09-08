@@ -26,18 +26,32 @@ $ gradle build publishToMavenLocal
 
 ## Building with maven
 
-This sample can be built using [Apache Maven](http://maven.apache.org/). The build will pull down a copy of Liberty, build the sample and produce a packaged liberty server that can be run locally or pushed up to Bluemix. 
+This sample can be built using [Apache Maven](http://maven.apache.org/).
+
+By default, maven will build the sample and run unit tests.
 
 ```bash
 $ mvn install
 ```
 
-:pushpin: Note: To run functional tests and get a packaged server from the build you must [download WAS Liberty](/docs/Downloading-WAS-Liberty.md) to C:/Liberty/wlp.
-:pushpin: Note: To get a packaged server without manually downloading Liberty set the system property libertyLicense to be the Liberty license code. The license code can be found at the bottom of the [current license](http://public.dhe.ibm.com/ibmdl/export/pub/software/websphere/wasdev/downloads/wlp/8.5.5.5/lafiles/runtime/en.html), look for the 'D/N: <license code>'. This option does not currently support running the functional tests.
+Running integration tests and producing a fully packaged liberty server that can be run locally or pushed to Bluemix requires a valid installation of liberty to work with.
+
+* [Download WAS Liberty](/docs/Downloading-WAS-Liberty.md) yourself, and specify where the installation is:
 
 ```bash
-$ mvn -DlibertyLicense=<license> install
+$ mvn install -Pwlp-install -Dwlp.install.dir=/path/to/installed/wlp
 ```
+
+* Specify a licensed version of liberty that should be downloaded by the liberty-maven-plugin.
+
+    The current developer license (as you would get from a direct wasdev.net download) can be found at the bottom of the [current license](http://public.dhe.ibm.com/ibmdl/export/pub/software/websphere/wasdev/downloads/wlp/8.5.5.5/lafiles/runtime/en.html), look for the 'D/N: &lt;license code&gt;'.
+```bash
+$ mvn install -Pwlp-download -Dwlp.license=<license code>
+```
+
+Once a valid install has been located (e.g. when running locally), the install profile information can be omitted on the command line.
+
+Liberty will be downloaded into the target directory by default, which means the profile parameters will be required for the first install after a clean.
 
 ## Next step:
 
