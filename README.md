@@ -21,7 +21,7 @@ This sample contains an example for a Twelve-Factor Application that can be run 
 
 * Building and running this sample:
     * on the [command line](/docs/Using-cmd-line.md)
-    * using [Eclipse and WebSphere Developer Tools](/docs/Using-WDT.md
+    * using [Eclipse and WebSphere Developer Tools](/docs/Using-WDT.md)
 * [Downloading WAS Liberty](/docs/Downloading-WAS-Liberty.md)
 * [Creating a Cloudant database on bluemix](/docs/Creating-Cloudant-database.md)
 
