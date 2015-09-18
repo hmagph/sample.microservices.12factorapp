@@ -16,7 +16,3 @@ There are a few options to choose from (especially for the beta drivers). Choose
 ## Tips
 
 * If you use bash, consider trying the [command line tools](https://github.com/WASdev/util.bash.completion), which provide tab-completion for the server and other commands.
-
-## Next step:
-
-[Running the application using WDT and Eclipse](/docs/Using-WDT.md) 
