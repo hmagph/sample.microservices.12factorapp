@@ -19,13 +19,10 @@ A Twelve-Factor application, as defined by [12factor.net](http://www.12factor.ne
 This sample contains an example for a Twelve-Factor Application that can be run on WAS Liberty and Bluemix. 
 
 
-* Building this sample:
-	* [Building with Gradle](/docs/Building-the-sample.md#building-with-gradle)
-	* [Building with Maven](/docs/Building-the-sample.md#building-with-maven)
+* Building and running this sample:
+    * on the [command line](/docs/Using-cmd-line.md)
+    * using [Eclipse and WebSphere Developer Tools](/docs/Using-WDT.md
 * [Downloading WAS Liberty](/docs/Downloading-WAS-Liberty.md)
-* Running the application:
-	* Starting the local server using [Eclipse and WebSphere Development Tools (WDT)](/docs/Using-WDT.md)
-	* Deploying the application onto [Bluemix](/docs/Deploying-application-to-Bluemix.md)
 * [Creating a Cloudant database on bluemix](/docs/Creating-Cloudant-database.md)
 
 Once the server has been started, go to http://localhost:9082/12-factor-application/ to view the sample locally or the route of your application to view the sample being hosted on Bluemix.
