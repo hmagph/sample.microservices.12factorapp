@@ -26,8 +26,6 @@
 
         <selectNewInstall>false</selectNewInstall>
         <existingInstall>true</existingInstall>
-
-        <wlp.acceptLicense>false</wlp.acceptLicense>
     </properties>
 
     <!-- This pom is built first (before application) as the application will use what is downloaded here to test/build against.
@@ -49,11 +47,11 @@
                             <skip>${selectNewInstall}</skip>
                             <exportAntProperties>true</exportAntProperties>
                             <target>
-                                <!-- only run when a profile is not specified -->
+                                <!-- Only run when a download/install profile is not specified !! -->
                                 <!-- Read the properties file that should already exist (no failure if not) -->
                                 <property file="${wlpInstallProps}" />
                                 
-                                <!-- sane default should we have nothing -->
+                                <!-- defaults for values not present in the file -->
                                 <property name="wlp.install.dir" value="${project.build.directory}/liberty"/>
 
                                 <!-- set a property to indicate that we read properties -->
@@ -103,28 +101,34 @@ wlp.install.dir=${wlp.install.dir}
                         <configuration>
                             <target unless="valid.wlp">
 <echo> ---
-NOTE: Integration tests will be disabled until a valid wlp installation is located.
+WARNING: wlp.install.dir is either unset, not a directory, or not a valid Liberty installation.
+Integration tests will be disabled until a valid wlp installation is located.
 
-This can be corrected in a few ways: 
+The current value is '${wlp.install.dir}'
 
-* mvn install -Pmvn-download 
+Please configure a Liberty installation: 
+
+* mvn install -Pmvn-download
     This will download a development version of WAS Liberty.
-    Optionally: wlp.version=version, e.g. 8.5.+
-                wlp.install.dir=/path/to/parent (liberty will be installed into that dir)
+    Additional options: -Dwlp.version=version, e.g. 8.5.+
+                        -Dwlp.install.dir=/path/to/parent (liberty will be installed into that dir)
 
 * mvn install -Pwlp-download -Dwlp.license=license_string
     This will download a licensed version of WAS Liberty.
-    Optionally: wlp.version=version, 8.5.+
-                wlp.target.dir=/path/to/parent  (liberty will be installed into that dir)
+    Additional options: -Dwlp.version=version, 8.5.+
+                        -Dwlp.target.dir=/path/to/parent  (liberty will be installed into that dir)
 
 * mvn install -Pwlp-install -Dwlp.install.dir=/path/to/wlp
     This will use the specified local installation of WAS Liberty.
 
-wlp.install.dir is either unset, not a directory, or not a valid Liberty installation.
-The current value is ${wlp.install.dir}
 
-Specify wlp.acceptLicense=true to automatically accept licenses associated with 
-runtime and feature downloads in automated builds.
+Using any of these tasks will create or replace ${wlpInstallProps}, which
+contains a wlp.install.dir property that references the installation. It will also
+ensure that installed runtime includes all of the features required by this sample.
+
+
+NOTE: Specify wlp.acceptLicense=true to automatically accept licenses associated with runtime and feature
+downloads in automated builds.
 
 </echo>
 <fail unless="read.wlp-install.properties" message="Incorrect selection of WAS Liberty installation." />
