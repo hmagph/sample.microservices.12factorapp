@@ -217,28 +217,6 @@ downloads in automated builds.
             <build>
                 <plugins>
                     <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-enforcer-plugin</artifactId>
-                        <executions>
-                            <execution>
-                                <id>enforce-license</id>
-                                <phase>initialize</phase>
-                                <goals>
-                                    <goal>enforce</goal>
-                                </goals>
-                                <configuration>
-                                    <rules>
-                                        <requireProperty>
-                                            <property>wlp.license</property>
-                                            <message>The wlp.license property must be provided with this profile, e.g. -Dwlp.license=&lt;license_string&gt;</message>
-                                        </requireProperty>
-                                    </rules>
-                                </configuration>
-                            </execution>
-                        </executions>
-                    </plugin>
-
-                    <plugin>
                         <groupId>net.wasdev.wlp.maven.plugins</groupId>
                         <artifactId>liberty-maven-plugin</artifactId>
                         <configuration>
@@ -256,8 +234,7 @@ downloads in automated builds.
                                 <configuration>
 		                    <assemblyInstallDirectory>${wlp.target.dir}</assemblyInstallDirectory>
                                     <install>
-                                        <licenseCode>${wlp.license}</licenseCode>
-                                        <version>${wlp.version}</version>
+                                        <type>webProfile7</type>
                                     </install>
                                 </configuration>
                             </execution>
