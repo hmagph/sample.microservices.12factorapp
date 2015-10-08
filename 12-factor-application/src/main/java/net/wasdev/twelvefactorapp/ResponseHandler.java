@@ -17,7 +17,12 @@ public class ResponseHandler {
 	}
 	
 	public ResponseHandler(String extension) throws Exception {
-		CloudantCredentials cc = new CloudantCredentials();
+		CloudantCredentials cc = new CloudantCredentials(
+				System.getenv("dbUsername"),
+				System.getenv("dbPassword"),
+				System.getenv("dbUrl"),
+				System.getenv("VCAP_SERVICES")
+				);
 		
 		String fullUrl = cc.getUrl() + extension;
 		System.out.println("Found url " + fullUrl);

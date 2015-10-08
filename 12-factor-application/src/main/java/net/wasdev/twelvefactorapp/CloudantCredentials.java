@@ -9,19 +9,20 @@ import javax.json.JsonString;
 
 public class CloudantCredentials {
 	
+	private String username;
+	private String password;
+	private String url;
 	
-	private String username = System.getenv("dbUsername");
-	private String password = System.getenv("dbPassword");
-	private String url = System.getenv("dbUrl");
-	
-	public CloudantCredentials() throws Exception {
-		
+	public CloudantCredentials(String username, String password, String url, String vcapServices) throws Exception {
 		boolean allVariablesFound = false;
 		if (username != null && password!= null && url != null) {
+			this.url = url;
+			this.username = username;
+			this.password = password;
 			allVariablesFound = true;
 		} else {
-			parseVcapServices();
-			if (username != null && password!= null && url != null) {
+			parseVcapServices(vcapServices);
+			if (this.username != null && this.password!= null && this.url != null) {
 				allVariablesFound = true;
 			}
 		}
@@ -31,10 +32,9 @@ public class CloudantCredentials {
 		}
 	}
 
-	private void parseVcapServices() {
-		String vcapServices = System.getenv("VCAP_SERVICES");
-		JsonObject body = Json.createReader(new StringReader(vcapServices)).readObject();
-		JsonArray cloudantObjectArray = body.getJsonArray("cloudantNoSQLDB");
+	private void parseVcapServices(String vcapServicesEnv) {
+		JsonObject vcapServices = Json.createReader(new StringReader(vcapServicesEnv)).readObject();
+		JsonArray cloudantObjectArray = vcapServices.getJsonArray("cloudantNoSQLDB");
 		JsonObject cloudantObject = cloudantObjectArray.getJsonObject(0);
 		JsonObject cloudantCredentials = cloudantObject.getJsonObject("credentials");
 		JsonString cloudantUsername = cloudantCredentials.getJsonString("username");
@@ -46,17 +46,14 @@ public class CloudantCredentials {
 	}
 
 	public String getUrl() {
-		// TODO Auto-generated method stub
 		return url;
 	}
 
 	public String getPassword() {
-		// TODO Auto-generated method stub
 		return password;
 	}
 
 	public String getUsername() {
-		// TODO Auto-generated method stub
 		return username;
 	}
 	
