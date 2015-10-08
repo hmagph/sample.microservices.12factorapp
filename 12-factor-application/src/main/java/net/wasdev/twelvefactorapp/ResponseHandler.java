@@ -17,21 +17,12 @@ public class ResponseHandler {
 	}
 	
 	public ResponseHandler(String extension) throws Exception {
-		String username = System.getenv("dbUsername");
-		String password = System.getenv("dbPassword");
-		String url = System.getenv("dbUrl");
+		CloudantCredentials cc = new CloudantCredentials();
 		
-		String[][] credentials = {{username, "username"}, {url, "url"}, {password, "password"}};
-		for (String[] credential : credentials) {
-			if (credential[0] == null) {
-				throw new Exception("Database cannot be accessed at this time, " + credential[1] + " is null.");
-			}
-		}
-		
-		String fullUrl = url + extension;
+		String fullUrl = cc.getUrl() + extension;
 		System.out.println("Found url " + fullUrl);
 		
-		String usernameAndPassword = username + ":" + password;
+		String usernameAndPassword = cc.getUsername() + ":" + cc.getPassword();
 				
 		String authorizationHeaderName = "Authorization";
 		String authorizationHeaderValue = "Basic " + javax.xml.bind.DatatypeConverter.printBase64Binary(usernameAndPassword.getBytes());
