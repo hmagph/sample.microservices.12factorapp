@@ -19,9 +19,4 @@ public class CredentialsTest {
 			Assert.assertEquals("The password should be cheese", "cheese", cc.getPassword());
 			Assert.assertEquals("The url should be cloudant://myDb", "cloudant://myDb", cc.getUrl());
 	}
-	
-	@Test
-	public void deliberateFail() {
-		Assert.fail("Test IDS tests");
-	}
 }
