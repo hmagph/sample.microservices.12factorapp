@@ -71,8 +71,8 @@
     </repositories>
 
     <modules>
-    	<module>12-factor-wlpcfg</module>
-    	<module>12-factor-application</module>
+        <module>12-factor-application</module>
+        <module>12-factor-wlpcfg</module>
     </modules>
     
 </project>

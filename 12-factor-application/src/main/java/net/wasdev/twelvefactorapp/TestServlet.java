@@ -11,16 +11,13 @@ import javax.servlet.http.HttpServletResponse;
 @WebServlet("/Test")
 public class TestServlet extends HttpServlet {
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	@Override
-	public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-		
-		PrintWriter out = response.getWriter();
-		out.println("hello world");
-	}
-	
+    @Override
+    public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
+
+        PrintWriter out = response.getWriter();
+        out.println("hello world");
+    }
+
 }

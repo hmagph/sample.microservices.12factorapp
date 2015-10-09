@@ -1,19 +1,19 @@
-<server description="Server for 12-factor app sample." >
+<server description="Server for 12-factor app sample.">
 
-	<featureManager>
-		<feature>servlet-3.1</feature>
-		<feature>jaxrs-2.0</feature>
-		<feature>jsonp-1.0</feature>
-		<feature>monitor-1.0</feature>
-		<feature>restConnector-1.0</feature>
-	</featureManager>
-	
-	<httpEndpoint httpPort="9082" httpsPort="9445" id="defaultHttpEndpoint"/>
+    <featureManager>
+        <feature>servlet-3.1</feature>
+        <feature>jaxrs-2.0</feature>
+        <feature>jsonp-1.0</feature>
+        <feature>monitor-1.0</feature>
+        <feature>restConnector-1.0</feature>
+    </featureManager>
 
-    <applicationMonitor updateTrigger="mbean"/>
+    <httpEndpoint httpPort="9082" httpsPort="9445"
+        id="defaultHttpEndpoint" />
 
-    <webApplication id="12-factor-application" location="12-factor-application.war" name="12-factor-application"/>
+    <applicationMonitor updateTrigger="mbean" />
 
-    <quickStartSecurity userPassword="password" userName="kate"></quickStartSecurity>
+    <quickStartSecurity userPassword="password"
+        userName="kate"></quickStartSecurity>
     <keyStore password="liberty"></keyStore>
 </server>
