@@ -1,4 +1,2 @@
-declared-services:
-  sample-java-cloudant-cloudantNoSQLDB:
-    label: cloudantNoSQLDB
-    plan: Shared
+services:
+  CloudantDBFor12Factor
