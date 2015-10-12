@@ -10,7 +10,6 @@ import javax.json.JsonArray;
 import javax.json.JsonException;
 import javax.json.JsonObject;
 import javax.json.JsonReader;
-import javax.json.JsonReaderFactory;
 import javax.json.JsonValue;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
