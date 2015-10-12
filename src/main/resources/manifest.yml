@@ -1,2 +1,2 @@
 services:
-  CloudantDBFor12Factor
+  - CloudantDBFor12Factor
