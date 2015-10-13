@@ -12,4 +12,5 @@ stages:
     build_type: maven
     script: |-
       #!/bin/bash
-      mvn -B package
+      mvn -B package -Pwlp-download
+    enable_tests: true
