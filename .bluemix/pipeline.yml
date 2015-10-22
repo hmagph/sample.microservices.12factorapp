@@ -1,16 +1,16 @@
 ---
 stages:
-- name: Build Stage
-  inputs:
-  - type: git
-    branch: master
-  triggers:
-  - type: commit
-  jobs:
-  - name: Build
-    type: builder
-    build_type: maven
-    script: |-
-      #!/bin/bash
-      mvn -B package -Pwlp-download
-    enable_tests: true
+  - name: Build Stage
+    inputs: 
+      - type: git
+        branch: master
+    triggers: 
+      - type: commit
+    jobs: 
+      - name: Build
+        type: builder
+        build_type: maven
+        script: |-
+            #!/bin/bash
+            mvn -B package -Pwlp-download
+        enable_tests: true
