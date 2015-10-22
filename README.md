@@ -1,5 +1,9 @@
 # Twelve-Factor Applications with Liberty
 
+Press this button, to get your own copy of Twelve-Factor Application running in Bluemix !
+
+[![Deploy To Bluemix](https://bluemix.net/deploy/button.png)](http://bluemix.net/deploy)
+
 A Twelve-Factor application, as defined by [12factor.net](http://www.12factor.net), has characteristics that are ideal for developing individual microservices. To summarize briefly, a twelve-factor application:
 
 1. is stored in a single codebase, tracked in a version control system: one codebase, many deployments. 
@@ -18,7 +22,6 @@ A Twelve-Factor application, as defined by [12factor.net](http://www.12factor.ne
 
 This sample contains an example for a Twelve-Factor Application that can be run on WAS Liberty and Bluemix. 
 
-
 * Building and running this sample:
     * on the [command line](/docs/Using-cmd-line.md)
     * using [Eclipse and WebSphere Developer Tools](/docs/Using-WDT.md)
@@ -29,7 +32,7 @@ Once the server has been started, go to http://localhost:9082/12-factor-applicat
 
 ## Notice
 
-© Copyright IBM Corporation 2015.
+Â© Copyright IBM Corporation 2015.
 
 ## License
 
