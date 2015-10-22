@@ -2,7 +2,7 @@
 
 Press this button, to get your own copy of Twelve-Factor Application running in Bluemix !
 
-[![Deploy To Bluemix](https://bluemix.net/deploy/button.png)](http://bluemix.net/deploy)
+[![Deploy To Bluemix](https://bluemix.net/deploy/button.png)](http://bluemix.net/deploy?repository=https://github.com/hmagph/sample.microservices.12factorapp)
 
 A Twelve-Factor application, as defined by [12factor.net](http://www.12factor.net), has characteristics that are ideal for developing individual microservices. To summarize briefly, a twelve-factor application:
 
